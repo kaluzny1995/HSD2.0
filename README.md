@@ -60,7 +60,7 @@ This is a project of a multilabel classifier of tweet texts whether they contain
 │   │   ├── acc_fa_styg.png
 │   │   ├── acc_fa_szan.png
 │   │   └── conf_matrices.png
-|   └── simple_ml_classifier
+│   └── simple_ml_classifier
 │   │   ├── cms_DT_entropy.png
 │   │   ├── cms_DT_gini.png
 │   │   ├── cms_RF_entropy_balanced.png
