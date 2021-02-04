@@ -6,7 +6,6 @@ This is a project of a multilabel classifier of tweet texts whether they contain
 **WARNING: Not all files or directories are in repository due to their size!**
 
 <details><summary>View directory structure</summary>
-  <p>
   ```bash
   ├── data
   │   ├── sady_main
@@ -84,5 +83,4 @@ This is a project of a multilabel classifier of tweet texts whether they contain
   ├── SimpleMLClassifier.ipynb
   └── README.md
   ```
-  </p>
 </details>
