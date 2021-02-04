@@ -7,8 +7,6 @@ This is a project of a multilabel classifier of tweet texts whether they contain
 
 <button type="button" class="collapsible">Open Collapsible</button>
 <div class="content">
-  <p>Lorem ipsum...</p>
-</div>
 
 ```bash
 ├── data
@@ -87,3 +85,5 @@ This is a project of a multilabel classifier of tweet texts whether they contain
 ├── SimpleMLClassifier.ipynb
 └── README.md
 ```
+
+</div>
