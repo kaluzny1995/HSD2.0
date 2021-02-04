@@ -6,17 +6,16 @@ This is a project of a multilabel classifier of tweet texts whether they contain
 **WARNING: Not all files or directories are in repository due to their size!**
 
 <details><summary>View directory structure</summary>
-  ```bash
-  ├── data
-  │   ├── sady_main
-  │   │   ├── sady_infos_raw.csv
-  │   │   ├── sady_infos_sanitized.csv
-  │   │   ├── sady_date_annotated.csv
-  │   │   ├── sady_other_scores.csv
-  │   │   ├── sady_pac_scores.csv
-  │   │   ├── sady_combined.csv
-  │   │   ├── sady_topic_pac_scores.csv
-  │   │   └── sady_simple_ml_classifier.csv
+  ├── data<br />
+  │   ├── sady_main<br />
+  │   │   ├── sady_infos_raw.csv<br />
+  │   │   ├── sady_infos_sanitized.csv<br />
+  │   │   ├── sady_date_annotated.csv<br />
+  │   │   ├── sady_other_scores.csv<br />
+  │   │   ├── sady_pac_scores.csv<br />
+  │   │   ├── sady_combined.csv<br />
+  │   │   ├── sady_topic_pac_scores.csv<br />
+  │   │   └── sady_simple_ml_classifier.csv<br />
   │   ├── sady_main
   │   │   ├── sady_2017_0105_raw.csv
   │   │   ├── sady_2017_0105_raw_pl.csv
@@ -82,5 +81,4 @@ This is a project of a multilabel classifier of tweet texts whether they contain
   ├── LexicalClassifier.ipynb
   ├── SimpleMLClassifier.ipynb
   └── README.md
-  ```
 </details>
