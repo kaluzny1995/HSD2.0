@@ -5,6 +5,11 @@ This is a project of a multilabel classifier of tweet texts whether they contain
 # Project directory structure
 **WARNING: Not all files or directories are in repository due to their size!**
 
+<button type="button" class="collapsible">Open Collapsible</button>
+<div class="content">
+  <p>Lorem ipsum...</p>
+</div>
+
 ```bash
 ├── data
 │   ├── sady_main
