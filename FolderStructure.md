@@ -75,10 +75,13 @@
 │   │   │   └── sady_infos_sanitized.csv
 │   │   └── processed
 │   │       ├── lemmas.csv
+│   │       ├── other_scores.csv
 │   │       ├── poc_scores.csv
+│   │       ├── topic_poc_scores.csv
 │   │       └── sady_duplicated.csv
 │   ├── tweets_supplement
 │   │   ├── main
+│   │   │   ├── sady_2015-0405_sanitized.csv
 │   │   │   └── sady_2015-0405_raw.csv
 │   │   └── processed
 │   ├── vulgars
