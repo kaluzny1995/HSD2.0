@@ -1,7 +1,9 @@
 # Hate Speech Detector v2.0
 ---
-**Description**<br />
+#### Description
 This is a project of a multilabel classifier of polish tweet texts whether they contain hate speech or not. The project is being made as a Master of Science degree thesis. There are seven different types of hate speech: **abusement** *(pol. wyzywanie)*, **threatening** *(pol. grożenie)*, **exclusion** *(pol. wykluczanie)*, **dehumanization** *(pol. odczłowieczanie)*, **humiliation** *(pol. poniżanie)*, **labeling** *(pol. stygmatyzacja)* and **blackmail** *(pol. szantaż)*. The topics of all tweets is the attitude of people (Twitter users) to polish jurisdiction institutions. The annotated data concern the time from June 2014 to December 2016.
+#### Data and models
+All data and trained models are available here: [HSD2.0_data.zip](https://drive.google.com/file/d/1Cg1mulD2AAp7jiQ1ShZp8xgRtBODiLVg/view?usp=sharing) and [HSD2.0_models.zip](https://drive.google.com/file/d/19QzvSJQ1n663e2MAV_AtZtZSs-Ts9vJF/view?usp=sharing).
 
 ## Project stages
 ---
