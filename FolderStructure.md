@@ -139,60 +139,29 @@
 │   │   ├── lda.py
 │   │   ├── other.py
 │   │   ├── poc.py
-│   │   ├── __pycache__
-│   │   │   ├── lda.cpython-36.pyc
-│   │   │   ├── other.cpython-36.pyc
-│   │   │   ├── poc.cpython-36.pyc
-│   │   │   └── topic_poc.cpython-36.pyc
 │   │   └── topic_poc.py
 │   ├── classifiers
 │   │   ├── Classifier.py
 │   │   ├── LexicalClassifier.py
-│   │   ├── __pycache__
-│   │   │   ├── Classifier.cpython-36.pyc
-│   │   │   ├── LexicalClassifier.cpython-36.pyc
-│   │   │   └── SimpleMLClassifier.cpython-36.pyc
 │   │   └── SimpleMLClassifier.py
 │   ├── constants.py
 │   ├── dataframes
 │   │   ├── cards.py
 │   │   ├── duplication.py
-│   │   ├── __pycache__
-│   │   │   ├── cards.cpython-36.pyc
-│   │   │   ├── duplication.cpython-36.pyc
-│   │   │   ├── timeline.cpython-36.pyc
-│   │   │   └── utils.cpython-36.pyc
 │   │   ├── timeline.py
 │   │   └── utils.py
 │   ├── extension
 │   │   ├── com.py
 │   │   ├── lemm.py
-│   │   ├── __pycache__
-│   │   │   ├── com.cpython-36.pyc
-│   │   │   ├── lemm.cpython-36.pyc
-│   │   │   ├── sim.cpython-36.pyc
-│   │   │   └── syn.cpython-36.pyc
 │   │   ├── sim.py
 │   │   └── syn.py
 │   ├── measures.py
-│   ├── __pycache__
-│   │   ├── constants.cpython-36.pyc
-│   │   ├── measures.cpython-36.pyc
-│   │   ├── sanitization.cpython-36.pyc
-│   │   └── webscraping.cpython-36.pyc
 │   ├── sanitization.py
 │   ├── utils
 │   │   ├── dates.py
 │   │   ├── ext.py
 │   │   ├── lemm.py
 │   │   ├── ops.py
-│   │   ├── __pycache__
-│   │   │   ├── dates.cpython-36.pyc
-│   │   │   ├── ext.cpython-36.pyc
-│   │   │   ├── lemm.cpython-36.pyc
-│   │   │   ├── ops.cpython-36.pyc
-│   │   │   ├── raw.cpython-36.pyc
-│   │   │   └── texts.cpython-36.pyc
 │   │   ├── raw.py
 │   │   └── texts.py
 │   ├── vectorizers
@@ -201,10 +170,6 @@
 │   ├── visualization
 │   │   ├── cards.py
 │   │   ├── classification.py
-│   │   ├── __pycache__
-│   │   │   ├── cards.cpython-36.pyc
-│   │   │   ├── classification.cpython-36.pyc
-│   │   │   └── stats.cpython-36.pyc
 │   │   └── stats.py
 │   └── webscraping.py
 └── tasks.odt
