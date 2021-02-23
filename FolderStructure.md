@@ -2,6 +2,7 @@
 **WARNING: Not all files or directories are in repository due to their size!**
 
 ```bash
+├── 00. ReadMe.ipynb
 ├── 01. WebScraping.ipynb
 ├── 02. TweetSanitizer.ipynb
 ├── 03. InitialDataAnalysis.ipynb
@@ -16,30 +17,11 @@
 │   ├── advanced_analysis
 │   ├── initial_data_analysis
 │   ├── lexical_classifier
-│   │   ├── acc_f1_groz.png
-│   │   ├── acc_f1_odcz.png
-│   │   ├── acc_f1_pon.png
-│   │   ├── acc_f1_styg.png
-│   │   ├── acc_f1_szan.png
-│   │   ├── acc_f1_wyk.png
-│   │   ├── acc_f1_wyz.png
-│   │   └── conf_matrices.png
 │   ├── schemes
 │   │   ├── HSD2.0_scheme01.png
 │   │   ├── HSD2.0_scheme02.png
 │   │   └── HSD2.0_scheme03.png
 │   ├── simple_ml_classifier
-│   │   ├── best_models.png
-│   │   ├── cms_DT_entropy.png
-│   │   ├── cms_DT_gini.png
-│   │   ├── cms_RF_entropy_balanced.png
-│   │   ├── cms_RF_entropy_balanced_subsample.png
-│   │   ├── cms_RF_gini_balanced.png
-│   │   ├── cms_RF_gini_balanced_subsample.png
-│   │   ├── cms_SV_linear_1_0.png
-│   │   ├── cms_SV_poly_3_1_0.png
-│   │   ├── cms_SV_poly_5_1_0.png
-│   │   └── model_acc_f1.png
 │   └── statistical_primary_analysis
 ├── data
 │   ├── hateful
@@ -77,12 +59,14 @@
 │   │       ├── lemmas.csv
 │   │       ├── other_scores.csv
 │   │       ├── poc_scores.csv
-│   │       ├── topic_poc_scores.csv
-│   │       └── sady_duplicated.csv
+│   │       ├── sady_duplicated.csv
+│   │       └── topic_poc_scores.csv
 │   ├── tweets_supplement
 │   │   ├── main
-│   │   │   ├── sady_2015-0405_sanitized.csv
-│   │   │   └── sady_2015-0405_raw.csv
+│   │   │   ├── sady_2015-0405_raw.csv
+│   │   │   ├── sady_2015-0405_sanitized.csv
+│   │   │   ├── sady_2016-0206_raw.csv
+│   │   │   └── sady_2016-0206_sanitized.csv
 │   │   └── processed
 │   ├── vulgars
 │   │   ├── ext_vulg.txt
@@ -97,7 +81,7 @@
 │   │   ├── babol.csv
 │   │   ├── bachnąć.csv
 │   │   ├── badziewie.csv
-│   │   ├── ............
+│   │   ├── ------------
 │   │   ├── zrobić_laskę.csv
 │   │   ├── zrobić_loda.csv
 │   │   ├── żłopanie.csv
@@ -107,7 +91,7 @@
 │   │   ├── a_gówno.csv
 │   │   ├── bać_się_o_własną_dupę.csv
 │   │   ├── bladź.csv
-│   │   ├── ............
+│   │   ├── ------------
 │   │   ├── zjeb.csv
 │   │   ├── zjeby.csv
 │   │   ├── zrobić_w_chuja.csv
@@ -117,14 +101,24 @@
 │       ├── a_gówno__texts.csv
 │       ├── ass__texts.csv
 │       ├── babol__texts.csv
-│       ├── ............
+│       ├── ------------
 │       ├── zrobić_w_chuja__texts.csv
 │       ├── zrobić_z_dupy_garaż__texts.csv
 │       ├── żłopanie__texts.csv
 │       └── żłopnąć__texts.csv
+├── HSD2.0_models.zip
 ├── models
 │   ├── lda
+│   │   ├── lda_groz.pkl
+│   │   ├── lda_odcz.pkl
+│   │   ├── lda_pon.pkl
+│   │   ├── lda_styg.pkl
+│   │   ├── lda_szan.pkl
+│   │   ├── lda_vulg.pkl
+│   │   ├── lda_wyk.pkl
+│   │   └── lda_wyz.pkl
 │   ├── lexical
+│   │   └── lex.pkl
 │   ├── plwordnet_3_0
 │   │   ├── LICENSE
 │   │   ├── plwordnet-3.0-visdisc.xml
@@ -132,22 +126,86 @@
 │   │   ├── readme-Eng.txt
 │   │   └── readme-Pol.txt
 │   └── simple_ml
+│       ├── sml_DTC-entropy.pkl
+│       ├── sml_DTC-gini.pkl
+│       ├── sml_LRC-l1.pkl
+│       ├── sml_LRC-l2.pkl
+│       ├── sml_RFC-entropy.pkl
+│       ├── sml_RFC-gini.pkl
+│       ├── sml_SGD-l1.pkl
+│       └── sml_SGD-l2.pkl
 ├── src
-│   ├── analysis.py
+│   ├── analysis
+│   │   ├── lda.py
+│   │   ├── other.py
+│   │   ├── poc.py
+│   │   ├── __pycache__
+│   │   │   ├── lda.cpython-36.pyc
+│   │   │   ├── other.cpython-36.pyc
+│   │   │   ├── poc.cpython-36.pyc
+│   │   │   └── topic_poc.cpython-36.pyc
+│   │   └── topic_poc.py
 │   ├── classifiers
 │   │   ├── Classifier.py
 │   │   ├── LexicalClassifier.py
+│   │   ├── __pycache__
+│   │   │   ├── Classifier.cpython-36.pyc
+│   │   │   ├── LexicalClassifier.cpython-36.pyc
+│   │   │   └── SimpleMLClassifier.cpython-36.pyc
 │   │   └── SimpleMLClassifier.py
 │   ├── constants.py
-│   ├── dataframe_utils.py
-│   ├── extension.py
+│   ├── dataframes
+│   │   ├── cards.py
+│   │   ├── duplication.py
+│   │   ├── __pycache__
+│   │   │   ├── cards.cpython-36.pyc
+│   │   │   ├── duplication.cpython-36.pyc
+│   │   │   ├── timeline.cpython-36.pyc
+│   │   │   └── utils.cpython-36.pyc
+│   │   ├── timeline.py
+│   │   └── utils.py
+│   ├── extension
+│   │   ├── com.py
+│   │   ├── lemm.py
+│   │   ├── __pycache__
+│   │   │   ├── com.cpython-36.pyc
+│   │   │   ├── lemm.cpython-36.pyc
+│   │   │   ├── sim.cpython-36.pyc
+│   │   │   └── syn.cpython-36.pyc
+│   │   ├── sim.py
+│   │   └── syn.py
 │   ├── measures.py
+│   ├── __pycache__
+│   │   ├── constants.cpython-36.pyc
+│   │   ├── measures.cpython-36.pyc
+│   │   ├── sanitization.cpython-36.pyc
+│   │   └── webscraping.cpython-36.pyc
 │   ├── sanitization.py
-│   ├── utils.py
+│   ├── utils
+│   │   ├── dates.py
+│   │   ├── ext.py
+│   │   ├── lemm.py
+│   │   ├── ops.py
+│   │   ├── __pycache__
+│   │   │   ├── dates.cpython-36.pyc
+│   │   │   ├── ext.cpython-36.pyc
+│   │   │   ├── lemm.cpython-36.pyc
+│   │   │   ├── ops.cpython-36.pyc
+│   │   │   ├── raw.cpython-36.pyc
+│   │   │   └── texts.cpython-36.pyc
+│   │   ├── raw.py
+│   │   └── texts.py
 │   ├── vectorizers
 │   │   ├── CharacterVectorizer.py
 │   │   └── Vectorizer.py
-│   ├── visualization.py
+│   ├── visualization
+│   │   ├── cards.py
+│   │   ├── classification.py
+│   │   ├── __pycache__
+│   │   │   ├── cards.cpython-36.pyc
+│   │   │   ├── classification.cpython-36.pyc
+│   │   │   └── stats.cpython-36.pyc
+│   │   └── stats.py
 │   └── webscraping.py
 └── tasks.odt
 ```
