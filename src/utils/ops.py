@@ -33,3 +33,9 @@ def union3(s0, s1, s2):
     s = s[s != '']
 
     return s
+
+
+def batch(iterable, n=1):
+    ln = len(iterable)
+    for ndx in range(0, ln, n):
+        yield iterable[ndx:min(ndx + n, ln)]

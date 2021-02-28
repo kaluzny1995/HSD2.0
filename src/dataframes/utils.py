@@ -1,4 +1,5 @@
 import csv
+import numpy as np
 import pandas as pd
 
 from ..constants import LABELS
@@ -10,6 +11,23 @@ def classes(df, convert_null=False):
         df_c = df_c.notnull().astype('int')
 
     return df_c
+
+
+def class_weights(df_c, w_type=0):
+    assert w_type in range(3), 'Unknown weighting type! Select 0 (1/ class card), 1 (all cards/class card), 2 (1-class card/all card).'
+    df = df_c[df_c.columns]
+
+    srs_c = df.sum()
+    if w_type == 0:
+        weigths = np.array([1/c for c in srs_c.values])
+    elif w_type == 1:
+        weigths = np.array([len(df)/c for c in srs_c.values])
+    elif w_type == 2:
+        weigths = np.array([2 - c/srs_c.values.sum() for c in srs_c.values])
+    else:
+        weigths = np.array([1/c for c in srs_c.values])
+
+    return weigths
 
 
 def phrases(df_c):

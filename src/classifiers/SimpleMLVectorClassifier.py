@@ -9,29 +9,30 @@ from sklearn.metrics import f1_score
 from tqdm.notebook import tqdm
 
 from ..classifiers.Classifier import Classifier
-from ..utils.ext import load_ext_phrases
 from ..extension.lemm import lemmatize_text
-from ..analysis.poc import get_POC
-from ..analysis.topic_poc import get_topic_POC
-from ..analysis.other import get_other
-from ..constants import SMLC_MODEL_DIR
+from ..constants import SMLVC_MODEL_DIR, SMLCV_MODEL_DIR
 
 
-class SimpleMLClassifier(Classifier):
-    def __init__(self, name='SimpleMLClassifier', short_name='SMLC', k_folds=10, clf_class=None, verbose=0, **clf_kwargs):
-        super(SimpleMLClassifier, self).__init__(name=name)
+class SimpleMLVectorClassifier(Classifier):
+    def __init__(self, name='SimpleMLVectorClassifier', short_name='SMLVC', k_folds=10, vec_class=None, clf_class=None, vec_analysis=False, verbose=0, vec_kwargs=dict({}), **clf_kwargs):
+        super(SimpleMLVectorClassifier, self).__init__(name=name)
+        if not vec_class:
+            raise ValueError('Class of the the vectorizer (vec_class) must be specified! Found None!')
         if not clf_class:
             raise ValueError('Class of the the classifier (clf_class) must be specified! Found None!')
 
         self.k_folds = k_folds
         self.short_name = short_name
 
-        self._ext_phrases = load_ext_phrases(load_vulg=True)
-
         self._skf_class = IterativeStratification
+        self._vec_class = vec_class
         self._clf_class = clf_class
+        self._vec_kwargs = vec_kwargs
         self._clf_kwargs = clf_kwargs
-        self.default_save_file = SMLC_MODEL_DIR.replace('{}', self.short_name)
+        if not vec_analysis:
+            self.default_save_file = SMLVC_MODEL_DIR.replace('{}', self.short_name)
+        else:
+            self.default_save_file = SMLCV_MODEL_DIR.replace('{}', self.short_name)
 
         self.best_f = 0.
         self.best_clf = None
@@ -42,12 +43,26 @@ class SimpleMLClassifier(Classifier):
     def __str__(self):
         return self.name
 
+    def _vectorize(self, X):
+        vec = self._vec_class(**self._vec_kwargs)
+        vec.load()
+
+        X = vec.transform(X)
+        if len(X.shape) > 2:
+            X = np.array([x.flatten() for x in X])
+
+        return X
+
     def fit(self, X, y):
         super().fit(X, y)
         if type(X) == pd.DataFrame:
             X = X.values.flatten()
+        elif type(X) == np.ndarray:
+            X = X.flatten()
         if type(y) == pd.DataFrame:
             y = y.values
+
+        X = self._vectorize(X)
 
         skf = self._skf_class(n_splits=self.k_folds, order=1)
         leave = None if not self._verbose else True
@@ -63,7 +78,7 @@ class SimpleMLClassifier(Classifier):
             y_pred = clf.predict(X_test)
 
             f0, f1 = f1_score(y_true=y_test, y_pred=y_pred, labels=[0, 1], average=None, zero_division=1.)
-            f = (f0 + f1)/2
+            f = (f0 + f1) / 2
             if self.best_f <= f:
                 self.best_f = f
                 self.best_clf = clf
@@ -73,17 +88,17 @@ class SimpleMLClassifier(Classifier):
         super().predict(X)
         if type(X) == pd.DataFrame:
             X = X.values.flatten()
+        elif type(X) == np.ndarray:
+            X = X.flatten()
+
+        X = self._vectorize(X)
+
         return self.best_clf.predict(X)
 
     def test(self, text):
         super().test(text)
         lemm = lemmatize_text(text)
-        poc = get_POC(lemm, self._ext_phrases)
-        topic_poc = get_topic_POC(lemm, n_words=20)
-        other = get_other(text, lemm)
-
-        combined = np.concatenate([poc, topic_poc, other]).reshape(1, -1)
-        preds = self.predict(combined)
+        preds = self.predict(np.array([lemm]))
 
         return preds
 

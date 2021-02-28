@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import f1_score, confusion_matrix
+from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
 
 import matplotlib.pyplot as plt
 
@@ -7,7 +7,7 @@ from ..constants import LABELS
 
 
 def confusion_matrices(y_trues, y_preds, title='Confusion matrices with F measures for all hate-speech classes with overall score.'):
-    assert (y_trues.shape[1]==7 and y_preds.shape[1]==7), 'Length of true values and predictions must be exactly 7!'
+    assert y_trues.shape[1] == 7 and y_preds.shape[1] == 7, 'Length of true values and predictions must be exactly 7!'
     fig, ax = plt.subplots(2, 4, figsize=(16, 8))
     positions = list([tuple((i, j)) for i in range(2) for j in range(4)])
     labels = LABELS + ['overall']
@@ -17,7 +17,7 @@ def confusion_matrices(y_trues, y_preds, title='Confusion matrices with F measur
     for i, (p, label, y_true, y_pred) in enumerate(zip(positions, labels, y_trues, y_preds)):
 
         f0, f1 = f1_score(y_true=y_true, y_pred=y_pred, labels=[0, 1], average=None, zero_division=1.)
-        cm = confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
+        cm = confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1]).T
 
         ax[p[0]][p[1]].set_title(f'"{label}" | f0: {f0:.2f} | f1: {f1:.2f}')
         ax[p[0]][p[1]].set_ylabel('Predicted')
@@ -37,7 +37,10 @@ def confusion_matrices(y_trues, y_preds, title='Confusion matrices with F measur
     plt.show()
 
 
-def models_quality_plot(y_trues, y_preds_s, model_names, title='Models quality analysis.'):
+def models_quality_plot(y_trues, y_preds_s, model_names, title='Models quality analysis.',
+                        measure='f', colors=None):
+    assert measure in ['f', 'F', 'p', 'P', 'r', 'R'],\
+        'Invalid measure! Type in "f" (F measure), "p" (precision) or "r" (recall).'
 
     def adapt(y):
         y = np.array([[yy.T[i] for yy in y] for i in range(y.shape[2])])
@@ -51,20 +54,24 @@ def models_quality_plot(y_trues, y_preds_s, model_names, title='Models quality a
     y_trues_s = adapt(y_trues_s)
     y_preds_s = adapt(y_preds_s)
 
+    if not colors:
+        colors = ['#f9766e', '#619dff']
+
     fig, ax = plt.subplots(2, 4, figsize=(16, 10))
     positions = list([tuple((i, j)) for i in range(2) for j in range(4)])
 
     for i, (p, label, y_true, y_pred) in enumerate(zip(positions, labels, y_trues_s, y_preds_s)):
         x = np.arange(len(model_names))
-        y_f0, y_f1 = np.array([f1_score(y_true=y_t, y_pred=y_p, labels=[0, 1], average=None, zero_division=1.) for y_t, y_p in zip(y_true, y_pred)]).T
+        measure_fn = f1_score if measure == 'f' else precision_score if measure == 'p' else recall_score
+        y_0, y_1 = np.array([measure_fn(y_true=y_t, y_pred=y_p, labels=[0, 1], average=None, zero_division=1.) for y_t, y_p in zip(y_true, y_pred)]).T
 
-        ax[p[0]][p[1]].set_title(f'"{label}" | Max F1: {np.max(y_f1):.4f}')
+        ax[p[0]][p[1]].set_title(f'"{label}" | Max {measure.upper()}1: {np.max(y_1):.4f}')
         ax[p[0]][p[1]].set_xticks(x)
         ax[p[0]][p[1]].set_xticklabels(model_names, rotation='90')
 
         w = 0.4
-        ax[p[0]][p[1]].bar(x - w / 2, y_f0, label='F0', width=w)
-        ax[p[0]][p[1]].bar(x + w / 2, y_f1, label='F1', width=w)
+        ax[p[0]][p[1]].bar(x - w / 2, y_0, label=f'{measure.upper()}0', color=colors[0], width=w)
+        ax[p[0]][p[1]].bar(x + w / 2, y_1, label=f'{measure.upper()}1', color=colors[1], width=w)
 
     h, ln = ax[0][0].get_legend_handles_labels()
     fig.legend(h, ln, loc='upper right')
@@ -78,7 +85,11 @@ def models_quality_plot(y_trues, y_preds_s, model_names, title='Models quality a
     plt.show()
 
 
-def best_model_for_class(y_trues, y_preds_s, model_names, title='Best F measures for each hate-speech class and overall.'):
+def best_model_for_class(y_trues, y_preds_s, model_names,
+                         title=f'Best F measures for each hate-speech class and overall.',
+                         measure='f', colors=None):
+    assert measure in ['f', 'F', 'p', 'P', 'r', 'R'], \
+        'Invalid measure! Type in "f" (F measure), "p" (precision) or "r" (recall).'
 
     def adapt(y):
         y = np.array([[yy.T[i] for yy in y] for i in range(y.shape[2])])
@@ -91,6 +102,9 @@ def best_model_for_class(y_trues, y_preds_s, model_names, title='Best F measures
     y_trues_s = np.array([y_trues for _ in range(len(model_names))])
     y_trues_s = adapt(y_trues_s)
     y_preds_s = adapt(y_preds_s)
+
+    if not colors:
+        colors = ['#f9766e', '#619dff']
 
     x = np.arange(len(labels))
     y_f0, y_f1 = list([]), list([])
@@ -105,8 +119,8 @@ def best_model_for_class(y_trues, y_preds_s, model_names, title='Best F measures
     plt.figure(figsize=(16, 10))
 
     w = 0.4
-    bars0 = plt.bar(x - w / 2, y_f0, label='F0', width=w)
-    bars1 = plt.bar(x + w / 2, y_f1, label='F1', width=w)
+    bars0 = plt.bar(x - w / 2, y_f0, label=f'{measure.upper()}0', color=colors[0], width=w)
+    bars1 = plt.bar(x + w / 2, y_f1, label=f'{measure.upper()}1', color=colors[1], width=w)
     plt.xticks(ticks=x, labels=labels)
 
     for idx, (rect0, rect1) in enumerate(zip(bars0, bars1)):

@@ -20,7 +20,7 @@ POC_LABELS = [f'{lsmall}_POC_{sc}' for sc in SCORE_TYPES for lsmall in LABELS_SM
 OPTIM_POC_LABELS = [f'{s}_{lsmall}_{sc}' for s in ['neg', 'pos'] for sc in SCORE_TYPES for lsmall in LABELS_SMALL]
 
 
-# paths
+# paths - phrases
 HATEFUL_RAW_DIR = 'data/hateful/raw_{}.txt'
 HATEFUL_LEMM_DIR = 'data/hateful/lemm_{}.txt'
 HATEFUL_EXT_DIR = 'data/hateful/ext_{}.txt'
@@ -28,27 +28,52 @@ VULGARS_RAW_DIR = 'data/vulgars/raw_{}.txt'
 VULGARS_LEMM_DIR = 'data/vulgars/lemm_{}.txt'
 VULGARS_EXT_DIR = 'data/vulgars/ext_{}.txt'
 
-LDA_MODEL_DIR = 'models/lda/lda_{}.pkl'
-LC_MODEL_DIR = 'models/lexical/lex.pkl'
-SMLC_MODEL_DIR = 'models/simple_ml/sml_{}.pkl'
-
+# paths - tweets
 RAW_PATH = 'data/tweets_sady/main/sady_infos_raw.csv'
 ANNOTATED_PATH = 'data/tweets_sady/main/sady_date_annotated.csv'
 SANITIZED_PATH = 'data/tweets_sady/main/sady_infos_sanitized.csv'
 COMBINED_PATH = 'data/tweets_sady/main/sady_combined.csv'
 
+# paths - supplement tweets
 SUPPLEMENT_RAW_DIR = 'data/tweets_supplement/main/sady_{}_raw.csv'
 SUPPLEMENT_SANITIZED_DIR = 'data/tweets_supplement/main/sady_{}_sanitized.csv'
 
+# paths - processed tweets
 LEMMAS_PATH = 'data/tweets_sady/processed/lemmas.csv'
 DUPLICATED_PATH = 'data/tweets_sady/processed/sady_duplicated.csv'
 POC_SCORES_PATH = 'data/tweets_sady/processed/poc_scores.csv'
 TOPIC_POC_SCORES_PATH = 'data/tweets_sady/processed/topic_poc_scores.csv'
 OTHER_SCORES_PATH = 'data/tweets_sady/processed/other_scores.csv'
 
+# paths - models
+LDA_MODEL_DIR = 'models/lda/lda_{}.pkl'
+LC_MODEL_DIR = 'models/classification/lexical/lex.pkl'
+SMLC_MODEL_DIR = 'models/classification/simple_ml/sml_{}.pkl'
+CHV_MODEL_DIR = 'models/vectorization/char/chv.pkl'
+WSBV_MODEL_DIR = 'models/vectorization/word/wsbv.pkl'
+WPTV_MODEL_DIR = 'models/vectorization/word/wptv_{}.pkl'
+WOTV_MODEL_DIR = 'models/vectorization/word/wotv_{}.pkl'
+TTFIDF_MODEL_DIR = 'models/vectorization/text/ttfidf_{}.pkl'
+TPTFTV_MODEL_DIR = 'models/vectorization/text/tptftv.pkl'
+TOTFTV_MODEL_DIR = 'models/vectorization/text/totftv_{}.pkl'
+TPTBERTV_MODEL_DIR = 'models/vectorization/text/tptbertv_{}.pkl'
+TOTBERTV_MODEL_DIR = 'models/vectorization/text/totbertv_{}.pkl'
+SMLVC_MODEL_DIR = 'models/classification/simple_vec_ml/smlv_ft_{}.pkl'
+SMLCV_MODEL_DIR = 'models/classification/simple_ml_vecs/smlc_rfc_{}.pkl'
+DLVC_MODEL_DIR = 'models/classification/vec_dl/[]/dlvc_{}.pkl'
+
+# paths - other
 WORDNET_PATH = 'models/plwordnet_3_0/plwordnet-3.0.xml'
+W2V_MODEL_DIR = 'models/word2vec/nkjp-lemmas-all-100-{}-hs.txt.gz'
+W2V_OWN_MODEL_DIR = 'models/word2vec/w2v_{}.bin'
+FT_MODEL_DIR = 'models/fasttext/kgr10_orths.vec.bin'
+FT_DATA_DIR = 'models/fasttext/ft_data_{}.txt'
+FT_OWN_MODEL_DIR = 'models/fasttext/ft_{}.bin'
+BERT_OWN_MODEL_DIR = 'models/bert/bert_{}'
 
 # other
 TAGGER_MODEL = 'polish-herbert-base'
 SPACY_PL_MODEL = 'pl_model'
 HYPHENATION_MODEL = 'pl_PL'
+BERT_MODEL = 'nli-bert-base'
+ROBERTA_MODEL = 'nli-roberta-base'
