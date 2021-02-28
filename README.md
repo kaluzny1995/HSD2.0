@@ -7,13 +7,27 @@ All data and trained models are available here: [HSD2.0_data.zip](https://drive.
 
 ## Project stages
 ---
-1. WebScraping
-2. TweetSanitizer
-3. InitialDataAnalysis
-4. StatisticalPrimaryDataAnalysis
-5. DataDuplicator
-6. HatefulAndVulgarPhrasesExtension
-7. ExtendedDataAnalysis
-8. AdvancedDataAnalysis
-9. LexicalClassifier
-10. SimpleMLClassifier
+1. Webscraping
+2. Tweet sanitization
+3. Initial data analysis
+4. Statistical primary data analysis
+5. Data duplicator
+6. Hateful and vulgar phrases extension
+7. Extended data analysis
+8. Advanced data analysis
+9. Lexical classifier
+10. Simple ML classifier
+11. Vectorization
+    1. Character and word vectorization
+    2. Text vectorization
+12. Simple ML vector classifier
+13. Simple ML classification vectorizers analysis
+14. DL classifiers (NN params analysis)
+    1. Dense NN
+    2. 1d convolutional NN
+    3. Simple recurrent NN
+    4. LSTM NN
+    5. GRU NN
+15. DL classifier hyperparams analysis *(coming soon)*
+16. Hate speech prediction with best model *(coming soon)*
+17. Statistical secondary data analysis *(coming soon)*
