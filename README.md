@@ -22,12 +22,13 @@ All data and trained models are available here: [HSD2.0_data.zip](https://drive.
     2. Text vectorization
 12. Simple ML vector classifier
 13. Simple ML classification vectorizers analysis
-14. DL classifiers (NN params analysis)
+14. DL classification vectorizers analysis
+15. DL classifiers (NN params analysis)
     1. Dense NN
     2. 1d convolutional NN
     3. Simple recurrent NN
     4. LSTM NN
     5. GRU NN
-15. DL classifier hyperparams analysis *(coming soon)*
-16. Hate speech prediction with best model *(coming soon)*
-17. Statistical secondary data analysis *(coming soon)*
+16. DL classifier hyperparams analysis *(coming soon)*
+17. Hate speech prediction with best model *(coming soon)*
+18. Statistical secondary data analysis *(coming soon)*
