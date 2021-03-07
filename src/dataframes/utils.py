@@ -23,9 +23,9 @@ def class_weights(df_c, w_type=0):
     elif w_type == 1:
         weigths = np.array([len(df)/c for c in srs_c.values])
     elif w_type == 2:
-        weigths = np.array([2 - c/srs_c.values.sum() for c in srs_c.values])
+        weigths = np.array([2 - c/len(df) for c in srs_c.values])
     else:
-        weigths = np.array([1/c for c in srs_c.values])
+        weigths = np.ones(len(LABELS))
 
     return weigths
 

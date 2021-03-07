@@ -12,12 +12,13 @@ class RecurrentNet(torch.nn.Module):
 
         self.rec = torch.nn.RNN(in_size, hidden_size, self.n_layers,
                                 batch_first=True, dropout=drop_prob, bidirectional=bidirectional)
-        self.relu = torch.nn.ReLU()
+        #self.relu = torch.nn.ReLU()
         self.fc = torch.nn.Linear(self.hidden_size, out_size)
 
     def forward(self, x):
         out, _ = self.rec(x)
-        out = self.fc(self.relu(out[:, -1]))
+        #out = self.relu(out[:, -1])
+        out = self.fc(out[:, -1, :])
         return out
 
 
@@ -30,12 +31,13 @@ class LSTMNet(torch.nn.Module):
 
         self.lstm = torch.nn.LSTM(in_size, hidden_size, self.n_layers,
                                   batch_first=True, dropout=drop_prob, bidirectional=bidirectional)
-        self.relu = torch.nn.ReLU()
+        #self.relu = torch.nn.ReLU()
         self.fc = torch.nn.Linear(self.hidden_size, out_size)
 
     def forward(self, x):
         out, _ = self.lstm(x)
-        out = self.fc(self.relu(out[:, -1]))
+        # out = self.relu(out[:, -1])
+        out = self.fc(out[:, -1, :])
         return out
 
 
@@ -48,10 +50,11 @@ class GRUNet(torch.nn.Module):
 
         self.gru = torch.nn.GRU(in_size, hidden_size, self.n_layers,
                                 batch_first=True, dropout=drop_prob, bidirectional=bidirectional)
-        self.relu = torch.nn.ReLU()
+        #self.relu = torch.nn.ReLU()
         self.fc = torch.nn.Linear(self.hidden_size, out_size)
 
     def forward(self, x):
         out, _ = self.gru(x)
-        out = self.fc(self.relu(out[:, -1]))
+        # out = self.relu(out[:, -1])
+        out = self.fc(out[:, -1, :])
         return out

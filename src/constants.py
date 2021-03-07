@@ -10,9 +10,11 @@ LABELS_SMALL = ['wyz', 'groz', 'wyk', 'odcz', 'pon', 'styg', 'szan']
 LABELS_V = LABELS + ['wulgaryzm']
 LABELS_V_SMALL = LABELS_SMALL + ['vulg']
 
+POPULARITY_LABELS = ['replies_count', 'retweets_count', 'likes_count']
+
 ANNOTATED_COLS = ['id', 'wydźwięk', 'klucze'] + LABELS
 INFOS_COLS = ['new_id', 'date', 'time', 'user_id', 'username', 'name', 'tweet', 'emojis', 'emoticons',
-              'mentions', 'hashtags', 'reply_to', 'replies_count', 'retweets_count', 'likes_count']
+              'mentions', 'hashtags', 'reply_to'] + POPULARITY_LABELS
 COMBINED_COLS = ANNOTATED_COLS[:1] + INFOS_COLS[1:] + ANNOTATED_COLS[1:]
 
 SCORE_TYPES = ['min', 'mean', 'max']
@@ -61,6 +63,22 @@ TOTBERTV_MODEL_DIR = 'models/vectorization/text/totbertv_{}.pkl'
 SMLVC_MODEL_DIR = 'models/classification/simple_vec_ml/smlv_ft_{}.pkl'
 SMLCV_MODEL_DIR = 'models/classification/simple_ml_vecs/smlc_rfc_{}.pkl'
 DLVC_MODEL_DIR = 'models/classification/vec_dl/[]/dlvc_{}.pkl'
+DLCV_MODEL_DIR = 'models/classification/dl_vecs/dlv_{}_dense.pkl'
+
+# paths - charts
+IDA_CHART_DIR = 'charts/01. initial_data_analysis/{}.png'
+SPA_CHART_DIR = 'charts/02. statistical_primary_analysis/{}.png'
+EDA_CHART_DIR = 'charts/03. extended_data_analysis/{}.png'
+LC_CHART_DIR = 'charts/04. lexical_classifier/{}.png'
+SMLC_CHART_DIR = 'charts/05. simple_ml_classifier/{}.png'
+SMLVC_CHART_DIR = 'charts/06. simple_ml_vector_classifier/{}.png'
+SMLCV_CHART_DIR = 'charts/07. simple_ml_classifier_vectors/{}.png'
+DLCV_CHART_DIR = 'charts/08. dl_classifier_vectors/{}.png'
+DLDC_CHART_DIR = 'charts/09a. dl_dense_classifier/{}.png'
+DLCC_CHART_DIR = 'charts/09b. dl_conv1d_classifier/{}.png'
+DLRC_CHART_DIR = 'charts/09c. dl_recurrent_classifier/{}.png'
+DLLSTMC_CHART_DIR = 'charts/09d. dl_lstm_classifier/{}.png'
+DLGRUC_CHART_DIR = 'charts/09e. dl_gru_classifier/{}.png'
 
 # paths - other
 WORDNET_PATH = 'models/plwordnet_3_0/plwordnet-3.0.xml'

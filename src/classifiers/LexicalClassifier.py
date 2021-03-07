@@ -15,7 +15,7 @@ from ..utils.ext import load_ext_phrases
 from ..extension.lemm import lemmatize_text
 from ..analysis.poc import get_POC
 from ..constants import (LABELS, LABELS_SMALL, SCORE_TYPES, POC_LABELS, OPTIM_POC_LABELS,
-                       LC_MODEL_DIR)
+                       LC_MODEL_DIR, LC_CHART_DIR)
 
 
 class LexicalClassifier(Classifier):
@@ -129,7 +129,7 @@ class LexicalClassifier(Classifier):
                             self.best_optimal_POCs[f'{s}_{lsmall}_{sc}'] = optimal_POCs[f'{s}_{lsmall}_{sc}']
 
     def _f_measure_lines(self, thrs, f0_s, f1_s, highlight_optims=True,
-                         title='F measures for thresholds of min, mean and max POC.'):
+                         title='F measures for thresholds of min, mean and max POC.', save_file=None):
         fig, ax = plt.subplots(1, 3, figsize=(16, 5))
 
         titles = ['Minimum POC', 'Mean POC', 'Maximum POC']
@@ -157,6 +157,8 @@ class LexicalClassifier(Classifier):
         fig.legend(handles=legend_lines[2:], loc='upper right')
 
         fig.suptitle(title)
+        if save_file:
+            plt.savefig(save_file)
         plt.show()
 
     def plot_f_measure_lines(self, X, y):
@@ -176,7 +178,8 @@ class LexicalClassifier(Classifier):
             self._f_measure_lines([thresholds[f'{lsmall}_{sc}'] for sc in SCORE_TYPES],
                                   [f_neg_scores[f'{lsmall}_{sc}'] for sc in SCORE_TYPES],
                                   [f_pos_scores[f'{lsmall}_{sc}'] for sc in SCORE_TYPES],
-                                  title=f'F measures for thresholds of min, mean and max POC for class "{label}".')
+                                  title=f'F measures for thresholds of min, mean and max POC for class "{label}".',
+                                  save_file=LC_CHART_DIR.replace('{}', f'f_measure_lines_{lsmall}'))
 
     def predict(self, X):
         super().predict(X)

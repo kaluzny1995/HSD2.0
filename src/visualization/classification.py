@@ -6,7 +6,9 @@ import matplotlib.pyplot as plt
 from ..constants import LABELS
 
 
-def confusion_matrices(y_trues, y_preds, title='Confusion matrices with F measures for all hate-speech classes with overall score.'):
+def confusion_matrices(y_trues, y_preds,
+                       title='Confusion matrices with F measures for all hate-speech classes with overall score.',
+                       save_file=None):
     assert y_trues.shape[1] == 7 and y_preds.shape[1] == 7, 'Length of true values and predictions must be exactly 7!'
     fig, ax = plt.subplots(2, 4, figsize=(16, 8))
     positions = list([tuple((i, j)) for i in range(2) for j in range(4)])
@@ -34,11 +36,13 @@ def confusion_matrices(y_trues, y_preds, title='Confusion matrices with F measur
 
     fig.suptitle(title)
     plt.tight_layout()
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
 
 
 def models_quality_plot(y_trues, y_preds_s, model_names, title='Models quality analysis.',
-                        measure='f', colors=None):
+                        measure='f', colors=None, save_file=None):
     assert measure in ['f', 'F', 'p', 'P', 'r', 'R'],\
         'Invalid measure! Type in "f" (F measure), "p" (precision) or "r" (recall).'
 
@@ -82,12 +86,14 @@ def models_quality_plot(y_trues, y_preds_s, model_names, title='Models quality a
     fig.suptitle(title, fontsize=20)
 
     plt.tight_layout()
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
 
 
 def best_model_for_class(y_trues, y_preds_s, model_names,
                          title=f'Best F measures for each hate-speech class and overall.',
-                         measure='f', colors=None):
+                         measure='f', colors=None, save_file=None):
     assert measure in ['f', 'F', 'p', 'P', 'r', 'R'], \
         'Invalid measure! Type in "f" (F measure), "p" (precision) or "r" (recall).'
 
@@ -137,4 +143,7 @@ def best_model_for_class(y_trues, y_preds_s, model_names,
     plt.ylim((0., 1.))
     plt.legend(loc='best')
 
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
+

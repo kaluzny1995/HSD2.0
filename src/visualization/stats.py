@@ -4,12 +4,14 @@ from scipy.signal import find_peaks
 
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from matplotlib.ticker import PercentFormatter
 
 from ..dataframes.timeline import find_empty_spaces
+from ..constants import LABELS
 
 
-def tweet_yearly_counts_pie(df, show_legend=True, title='Tweet yearly counts.'):
-    fig, ax = plt.subplots(figsize=(16, 10))
+def tweet_yearly_counts_pie(df, show_legend=True, title='Tweet yearly counts.', save_file=None):
+    fig, ax = plt.subplots(figsize=(10, 10))
 
     data = df['count'].values
     labels = df.index.values
@@ -28,11 +30,12 @@ def tweet_yearly_counts_pie(df, show_legend=True, title='Tweet yearly counts.'):
         leg.set_title("Year", prop=l_props)
 
     ax.set_title(title)
-
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
 
 
-def tweet_count_bars(df_m, df_wd, df_h, title='All tweets in figures.'):
+def tweet_count_bars(df_m, df_wd, df_h, title='All tweets in figures.', save_file=None):
     fig, ax = plt.subplots(1, 3, figsize=(20, 6))
 
     df_m.plot(kind='bar', ax=ax[0], color='#f8766d')
@@ -45,11 +48,13 @@ def tweet_count_bars(df_m, df_wd, df_h, title='All tweets in figures.'):
 
     plt.suptitle(title)
     plt.tight_layout()
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
 
 
 def tweets_timeline(df, empty_spaces=None, threshold=100, empty_space_threshold=10,
-                    title='Tweet amounts timeline analysis.'):
+                    title='Tweet amounts timeline analysis.', save_file=None):
     fig, ax = plt.subplots(figsize=(20, 8))
 
     # plot tweet amounts
@@ -81,4 +86,50 @@ def tweets_timeline(df, empty_spaces=None, threshold=100, empty_space_threshold=
 
     plt.legend(loc='best')
     plt.suptitle(title)
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
+
+
+def popularity_hists(df, attribute='likes', title=None, color='#f9766e', save_file=None):
+    fig, ax = plt.subplots(2, 4, figsize=(16, 8))
+    positions = list([tuple((i, j)) for i in range(2) for j in range(4)])
+    labels = LABELS + ['others']
+    
+    df_pop = df.loc[:, [f'{attribute}_count'] + LABELS]
+    df_pop.loc[:, LABELS] = df_pop.loc[:, LABELS].notnull().astype('int')
+
+    data = list([])
+    for label in labels:
+        if label != 'others':
+            d = df_pop.loc[:, [f'{attribute}_count', label]][df_pop[label] != 0][f'{attribute}_count'].values
+        else:
+            d = df_pop.loc[:, [f'{attribute}_count'] + LABELS][(df_pop[LABELS] == 0).all(axis=1)][f'{attribute}_count'].values
+        data.append(d)
+
+    for i, (p, label, d) in enumerate(zip(positions, labels, data)):
+        d_norm = d/np.linalg.norm(d)
+
+        ax[p[0]][p[1]].set_title(f'"{label}" | max {attribute}: {np.max(d)}')
+        ax[p[0]][p[1]].hist(d_norm, weights=np.ones(len(d_norm))/len(d_norm), color=color, label='count')
+        ax[p[0]][p[1]].set_xlim(0, 1)
+        ax[p[0]][p[1]].set_yscale('log')
+        ax[p[0]][p[1]].yaxis.set_major_formatter(PercentFormatter(1))
+        ax[p[0]][p[1]].set_yticks([0.01, 0.1, 1.])
+
+    h, ln = ax[0][0].get_legend_handles_labels()
+    fig.legend(h, ln, loc='upper right')
+
+    fig.text(0., 0.5, 'Count percentage', fontsize=16, va='center', rotation='vertical')
+    fig.text(0.5, 0., f'{attribute.capitalize()} count', fontsize=16, ha='center')
+
+    if not title:
+        m = dict({'likes': 'like', 'replies': 'reply', 'retweets': 'retweet'})
+        title = f'Tweet normalized {m[attribute]} counts analysis for each hate-speech type and others (non-hate tweets).'
+    fig.suptitle(title, fontsize=20)
+
+    plt.tight_layout()
+    if save_file:
+        plt.savefig(save_file)
+    plt.show()
+

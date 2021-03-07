@@ -14,18 +14,20 @@ from tqdm.notebook import tqdm
 from ..classifiers.Classifier import Classifier
 from ..extension.lemm import lemmatize_text
 from ..nn.datasets import TweetsDataset
-from ..constants import DLVC_MODEL_DIR
+from ..constants import DLVC_MODEL_DIR, DLCV_MODEL_DIR
 
 
 class DLVectorClassifier(Classifier):
     def __init__(self, name='DLVectorClassifier', short_name='DLVC', k_folds=10, weights=None,
                  vec_class=None, nn_class=None, nn_type='dense', vec_params=None, vec_output_dims=768,
-                 nn_hparams=None, nn_params=None, verbose=0):
+                 vec_analysis=False, nn_hparams=None, nn_params=None, verbose=0):
         super(DLVectorClassifier, self).__init__(name=name)
         if not vec_class:
             raise ValueError('Class of the the vectorizer (vec_class) must be specified! Found None!')
         if not nn_class:
             raise ValueError('Class of the the neural network model (nn_class) must be specified! Found None!')
+        if vec_analysis and nn_type != 'dense':
+            raise ValueError('Vector analysis is applicable only for dense neural network type!')
 
         default_hyperparams = dict({
             '_train_bs': 60,
@@ -46,8 +48,12 @@ class DLVectorClassifier(Classifier):
         self._vec_params = dict({}) if not vec_params else vec_params
         self._vec_output_dims = vec_output_dims
         self._nn_params = dict({}) if not nn_params else nn_params
-        self.default_save_file = DLVC_MODEL_DIR.replace('[]', self.nn_type).replace('{}', self.short_name)
-        self.default_model_save_file = self.default_save_file.replace('.pkl', '.pt')
+        if not vec_analysis:
+            self.default_save_file = DLVC_MODEL_DIR.replace('[]', self.nn_type).replace('{}', self.short_name)
+            self.default_model_save_file = self.default_save_file.replace('.pkl', '.pt')
+        else:
+            self.default_save_file = DLCV_MODEL_DIR.replace('{}', self.short_name)
+            self.default_model_save_file = self.default_save_file.replace('.pkl', '.pt')
 
         self._nn_hparams = default_hyperparams if not nn_hparams else nn_hparams
         self._train_bs = self._nn_hparams['_train_bs']
@@ -77,10 +83,21 @@ class DLVectorClassifier(Classifier):
         return X
 
     def _adapt_shape(self, x):
-        if self.nn_type in ['conv1d', 'recurrent', 'lstm', 'gru']:
-            return x.reshape(-1, 3, self._vec_output_dims//3)
-        else:
-            return x
+        # determine nn input shape
+        self._vec_output_dims = len(x[0])  # for dense nns
+        self._nn_params['in_size'] = len(x[0])
+
+        if any(list([self.nn_type.find(n) >= 0 for n in ['conv1d', 'recurrent', 'lstm', 'gru']])):
+            x = np.array([xx[:self._vec_output_dims//3*3] for xx in x])  # truncate to number of dims divisible by 3
+            x = x.reshape((-1, 3, self._vec_output_dims//3))
+
+            if any(list([self.nn_type.find(n) >= 0 for n in ['recurrent', 'lstm', 'gru']])):  # for recurrent nns
+                self._vec_output_dims = len(x[0][0])
+                self._nn_params['in_size'] = len(x[0][0])
+            else:  # for conv nns
+                self._nn_params['input_dim'] = (3, len(x[0][0]))
+
+        return x
 
     def _sigmoid(self, x):
         return np.array([1/(1 + np.exp(-xx)) for xx in x])
@@ -203,7 +220,7 @@ class DLVectorClassifier(Classifier):
 
         self._model.load_state_dict(torch.load(self.default_model_save_file))
 
-    def plot_train_history_lines(self, title='Deep Learning model training history.'):
+    def plot_train_history_lines(self, title='Deep Learning model training history.', save_file=None):
         fig, ax = plt.subplots(1, 3, figsize=(20, 6))
 
         data = self.metrics
@@ -227,6 +244,8 @@ class DLVectorClassifier(Classifier):
             ax[i].set_ylabel('Score')
 
         plt.suptitle(title, fontsize=16)
+        if save_file:
+            plt.savefig(save_file)
         plt.show()
 
     def predict(self, X):
@@ -261,7 +280,10 @@ class DLVectorClassifier(Classifier):
         model_dict = dict({
             'f': self.best_f,
             'split_ids': self.best_split_ids,
-            'metrics': self.metrics
+            'metrics': self.metrics,
+            'vec_out_dims': self._vec_output_dims,
+            'in_size': self._nn_params['in_size'],
+            'in_dim': None if not 'input_dim' in self._nn_params else self._nn_params['input_dim']
         })
         with open(save_file, 'wb') as f:
             pickle.dump(model_dict, f)
@@ -279,8 +301,12 @@ class DLVectorClassifier(Classifier):
         self.best_f = model_dict['f']
         self.best_split_ids = model_dict['split_ids']
         self.metrics = model_dict['metrics']
+        self._vec_output_dims = model_dict['vec_out_dims']
 
         if not model_load_file:
             model_load_file = self.default_model_save_file
+        self._nn_params['in_size'] = model_dict['in_size']
+        if self.nn_type.find('conv1d') >= 0:
+            self._nn_params['input_dim'] = model_dict['in_dim']  # adjust input dim for conv nn
         self._model = self._nn_class(**self._nn_params)
         self._model.load_state_dict(torch.load(model_load_file))

@@ -6,12 +6,13 @@ from ...constants import LABELS
 
 
 class Conv1dNet(torch.nn.Module):
-    def __init__(self, in_channels=3, out_channels=20, kernel_size=7, n_convs=5, out_size=len(LABELS), input_dim=(3, 256)):
+    def __init__(self, in_size=100, in_channels=3, out_channels=20, kernel_size=7, n_convs=5, out_size=len(LABELS), input_dim=(3, 256)):
         super(Conv1dNet, self).__init__()
+        self.__in_size = in_size
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.kernel_size = kernel_size
-        self.n_convs = n_convs
+        self.n_convs = n_convs - 1
         self.out_size = out_size
         self.input_dim = input_dim
 

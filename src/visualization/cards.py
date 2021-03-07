@@ -5,16 +5,20 @@ from matplotlib_venn import venn3, venn3_circles
 from upsetplot import UpSet
 
 
-def single_cardinalities_bar(df_sc, title='Single class cardinalities (%).'):
+def single_cardinalities_bar(df_sc, title='Single class cardinalities (%).', save_file=None):
     ax = df_sc['cardinality'][1:].plot(kind='barh', figsize=(16, 8))
     for p, perc in zip(ax.patches, df_sc['%'][1:]):
         plt.text(p.get_width(), p.get_y()+0.25*p.get_height(), f'{p.get_width()} ({perc:1.2f}%)', fontsize=16)
 
     plt.title(title)
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
 
 
-def single_cardinalities_comp_bar(df_sc_comp, title='Comparison of single class cardinalities (%) before and after duplication of certain data.'):
+def single_cardinalities_comp_bar(df_sc_comp,
+                                  title='Comparison of single class cardinalities (%) before and after duplication of certain data.',
+                                  save_file=None):
     ax = df_sc_comp[1:][['card. before', 'card. after']].plot(kind='barh', stacked=True, figsize=(16, 8))
     for p, (cb, pb, ca, pa) in zip(ax.patches, df_sc_comp[1:].values):
         text0 = f'{int(cb)} ({pb:1.2f}%)'
@@ -25,18 +29,23 @@ def single_cardinalities_comp_bar(df_sc_comp, title='Comparison of single class 
         plt.text(ca+cb + (150 if ca-cb<100 else 0), p.get_y()+0.55*p.get_height(), text1b, fontsize=16)
 
     plt.title(title)
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
 
 
-def combination_cardinalities_upset(df_cc, title='Combination of classes and single classes cardinalities.', color='red'):
+def combination_cardinalities_upset(df_cc, title='Combination of classes and single classes cardinalities.',
+                                    color='red', save_file=None):
     upset = UpSet(df_cc['cardinality'][1:], sort_by='cardinality', facecolor=color, element_size=22)
     upset.plot()
 
     plt.suptitle(title)
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
 
 
-def phrase_cardinalities_bar(df_pc, title='Hateful phrases cardinalities (%).'):
+def phrase_cardinalities_bar(df_pc, title='Hateful phrases cardinalities (%).', save_file=None):
     ax = df_pc.plot(kind='bar', figsize=(16, 8))
     ax.get_legend().remove()
     for p in ax.patches:
@@ -45,10 +54,14 @@ def phrase_cardinalities_bar(df_pc, title='Hateful phrases cardinalities (%).'):
                  ha='center', va='bottom', fontsize=16)
 
     plt.title(title)
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
 
 
-def phrase_cardinalities_comp_bar(df_pcc, title='Comparison of hateful phrases cardinalities (%) before and after extension.'):
+def phrase_cardinalities_comp_bar(df_pcc,
+                                  title='Comparison of hateful phrases cardinalities (%) before and after extension.',
+                                  save_file=None):
     ax = df_pcc.plot(kind='bar', stacked=True, figsize=(16, 8))
     for p, (cb, ca) in zip(ax.patches, df_pcc.values):
         pb = cb/df_pcc['cardinality'].sum()
@@ -61,10 +74,12 @@ def phrase_cardinalities_comp_bar(df_pcc, title='Comparison of hateful phrases c
         plt.text(p.get_x() + p.get_width()/2, ca+cb + (150 if ca-cb<50 else 0)-80, text1b, ha='center', va='bottom', fontsize=16)
 
     plt.title(title)
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
 
 
-def vulgars_cardinalities_venn(vulgars, labels, title='Vulgar words cardinalities.'):
+def vulgars_cardinalities_venn(vulgars, labels, title='Vulgar words cardinalities.', save_file=None):
     plt.figure(figsize=(12, 10))
     venn3([set(v) for v in vulgars],
           set_colors=('#3E64AF', '#3EAF5D', '#D74E3B'),
@@ -73,11 +88,13 @@ def vulgars_cardinalities_venn(vulgars, labels, title='Vulgar words cardinalitie
     venn3_circles([set(v) for v in vulgars], lw=0.7)
 
     plt.title(title)
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
 
 
-def sentiment_counts_pie(data, labels, title='Empirically annotated sentiment cardinalities.'):
-    fig, ax = plt.subplots(figsize=(16, 10))
+def sentiment_counts_pie(data, labels, title='Empirically annotated sentiment cardinalities.', save_file=None):
+    fig, ax = plt.subplots(figsize=(10, 10))
 
     def func(pct, allvals):
         absolute = int(pct/100.*np.sum(allvals))
@@ -92,5 +109,6 @@ def sentiment_counts_pie(data, labels, title='Empirically annotated sentiment ca
     leg.set_title("Sentiment", prop=l_props)
 
     ax.set_title(title)
-
+    if save_file:
+        plt.savefig(save_file)
     plt.show()
