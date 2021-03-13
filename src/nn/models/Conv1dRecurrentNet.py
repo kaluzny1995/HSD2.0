@@ -5,10 +5,11 @@ import operator
 from ...constants import LABELS
 
 
-class Conv1dNet(torch.nn.Module):
-    def __init__(self, in_size=100, in_channels=3, out_channels=20, kernel_size=7, n_convs=5, out_size=len(LABELS),
-                 input_dim=(3, 256)):
-        super(Conv1dNet, self).__init__()
+class Conv1dRecurrentNet(torch.nn.Module):
+    def __init__(self, nn_type='recurrent', in_size=100, in_channels=3, out_channels=32, kernel_size=5, n_convs=2, out_size=len(LABELS),
+                 input_dim=(3, 256), hidden_size=100, n_layers=1, drop_prob=0.1, bidirectional=False):
+        super(Conv1dRecurrentNet, self).__init__()
+
         self.__in_size = in_size
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -16,6 +17,9 @@ class Conv1dNet(torch.nn.Module):
         self.n_convs = n_convs - 1
         self.out_size = out_size
         self.input_dim = input_dim
+
+        self.hidden_size = hidden_size if not bidirectional else hidden_size * 2
+        self.n_layers = n_layers
 
         modules = list([])
         modules.append(torch.nn.Conv1d(in_channels=self.in_channels, out_channels=self.out_channels,
@@ -30,21 +34,19 @@ class Conv1dNet(torch.nn.Module):
 
         self.feature_extractor = torch.nn.Sequential(*modules)
 
-        n_dense = functools.reduce(operator.mul,
-                                   list(self.feature_extractor(torch.rand(1, *self.input_dim)).shape))
+        n_rec = self.feature_extractor(torch.rand(1, *self.input_dim)).shape[-1]
 
-        self.classifier = torch.nn.Sequential(
-            torch.nn.ReLU(inplace=True),
-            torch.nn.Linear(in_features=n_dense, out_features=100),
-            torch.nn.ReLU(inplace=True),
-            torch.nn.Linear(in_features=100, out_features=out_size),
-        )
+        nn_class = torch.nn.RNN if nn_type.find('recurrent') >= 0 else torch.nn.LSTM if nn_type.find('lstm') >= 0 \
+            else torch.nn.GRU
+
+        self.rec = nn_class(n_rec, hidden_size, self.n_layers,
+                            batch_first=True, dropout=drop_prob, bidirectional=bidirectional)
+        self.fc = torch.nn.Linear(self.hidden_size, out_size)
 
     def forward(self, vector):
-        batch_size = vector.size(0)
-
         vector = self.feature_extractor(vector)
-        vector = vector.view(batch_size, -1)  # flatten the vector
-        out = self.classifier(vector)
+
+        out, _ = self.rec(vector)
+        out = self.fc(out[:, -1, :])
 
         return out

@@ -33,8 +33,12 @@ class DLVectorClassifier(Classifier):
             '_train_bs': 60,
             '_valid_bs': 30,
             '_test_bs': 30,
-            '_lr': 0.0005,
-            '_epochs': 10,
+            '_optim': torch.optim.Adam,
+            '_optim_params': dict({'lr': 0.0005, 'weight_decay': 0.0005}),
+            '_sched': torch.optim.lr_scheduler.LambdaLR,
+            '_sched_params': dict({'lr_lambda': lambda e: 0.65 * e}),
+            '_epochs': 20,
+            '_min_epochs': 10,
         })
 
         self.k_folds = k_folds
@@ -55,12 +59,17 @@ class DLVectorClassifier(Classifier):
             self.default_save_file = DLCV_MODEL_DIR.replace('{}', self.short_name)
             self.default_model_save_file = self.default_save_file.replace('.pkl', '.pt')
 
-        self._nn_hparams = default_hyperparams if not nn_hparams else nn_hparams
-        self._train_bs = self._nn_hparams['_train_bs']
-        self._valid_bs = self._nn_hparams['_valid_bs']
-        self._test_bs = self._nn_hparams['_test_bs']
-        self._lr = self._nn_hparams['_lr']
-        self._epochs = self._nn_hparams['_epochs']
+        self._train_bs = default_hyperparams['_train_bs'] if '_train_bs' not in self._nn_params else nn_hparams['_train_bs']
+        self._valid_bs = default_hyperparams['_valid_bs'] if '_valid_bs' not in self._nn_params else nn_hparams['_valid_bs']
+        self._test_bs = default_hyperparams['_test_bs'] if '_test_bs' not in self._nn_params else nn_hparams['_test_bs']
+        self._optim = default_hyperparams['_optim'] if '_optim' not in self._nn_params else nn_hparams['_optim']
+        self._optim_params = default_hyperparams['_optim_params'] if '_optim_params' not in self._nn_params else nn_hparams['_optim_params']
+        self._sched = default_hyperparams['_sched'] if '_sched' not in self._nn_params else nn_hparams['_sched']
+        self._sched_params = default_hyperparams['_sched_params'] if '_sched_params' not in self._nn_params else nn_hparams['_sched_params']
+        self._epochs = default_hyperparams['_epochs'] if '_epochs' not in self._nn_params else nn_hparams['_epochs']
+        self._min_epochs = default_hyperparams['_min_epochs'] if '_min_epochs' not in self._nn_params else nn_hparams['_min_epochs']
+
+        assert self._min_epochs < self._epochs, 'Number of minimal epochs must be lower than number of epochs!'
 
         self._model = None
         self.best_f = 0.
@@ -71,6 +80,15 @@ class DLVectorClassifier(Classifier):
 
     def __str__(self):
         return self.name
+
+    def _is_recurrent(self):
+        return any(list([self.nn_type.find(n) >= 0 for n in ['recurrent', 'lstm', 'gru']]))
+
+    def _is_conv1d(self):
+        return any(list([self.nn_type.find(n) >= 0 for n in ['conv', 'conv1d']]))
+
+    def _is_not_dense(self):
+        return any(list([self.nn_type.find(n) >= 0 for n in ['conv1d', 'recurrent', 'lstm', 'gru']]))
 
     def _vectorize(self, X):
         vec = self._vec_class(**self._vec_params)
@@ -87,15 +105,15 @@ class DLVectorClassifier(Classifier):
         self._vec_output_dims = len(x[0])  # for dense nns
         self._nn_params['in_size'] = len(x[0])
 
-        if any(list([self.nn_type.find(n) >= 0 for n in ['conv1d', 'recurrent', 'lstm', 'gru']])):
+        if self._is_not_dense():
             x = np.array([xx[:self._vec_output_dims//3*3] for xx in x])  # truncate to number of dims divisible by 3
             x = x.reshape((-1, 3, self._vec_output_dims//3))
 
-            if any(list([self.nn_type.find(n) >= 0 for n in ['recurrent', 'lstm', 'gru']])):  # for recurrent nns
+            if self._is_conv1d():  # for conv nns
+                self._nn_params['input_dim'] = (3, len(x[0][0]))
+            else:  # for recurrent nns
                 self._vec_output_dims = len(x[0][0])
                 self._nn_params['in_size'] = len(x[0][0])
-            else:  # for conv nns
-                self._nn_params['input_dim'] = (3, len(x[0][0]))
 
         return x
 
@@ -194,12 +212,13 @@ class DLVectorClassifier(Classifier):
             valid_dl = DataLoader(valid_ds, batch_size=self._valid_bs, shuffle=False)
 
             self._model = self._nn_class(**self._nn_params)
-            optimizer = torch.optim.Adam(params=self._model.parameters(), lr=self._lr)
+            optimizer = self._optim(params=self._model.parameters(), **self._optim_params)
+            scheduler = self._sched(optimizer=optimizer, **self._sched_params)
 
             ta, tf, tl, va, vf, vl = list([]), list([]), list([]), list([]), list([]), list([])
             tt = tqdm(range(self._epochs), leave=False)
+            tt.set_postfix_str(f'Epoch: 1/{self._epochs}')
             for epoch in tt:
-                tt.set_postfix_str(f'Epoch: {epoch+1}/{self._epochs}')
                 a, f, ls = self._train(optim=optimizer, train_dl=train_dl, e=epoch)
                 ta.append(a)
                 tf.append(f)
@@ -209,10 +228,18 @@ class DLVectorClassifier(Classifier):
                 vf.append(f)
                 vl.append(ls)
 
-                if self.best_f <= f:
+                if self._sched == torch.optim.lr_scheduler.ReduceLROnPlateau:
+                    scheduler.step(metrics=ls)
+                else:
+                    scheduler.step()
+
+                if self.best_f <= f and epoch >= self._min_epochs:
                     torch.save(self._model.state_dict(), self.default_model_save_file)
                     self.best_f = f
                     self.best_split_ids = [train_index, valid_index]
+
+                if epoch < self._epochs - 1:
+                    tt.set_postfix_str(f'Epoch: {epoch + 2}/{self._epochs} | Mean train/valid. loss: {tl[-1]:.4f}/{vl[-1]:.4f}')
 
             if best_fold_f <= np.max(vf):
                 self.metrics = np.array([ta, tf, tl, va, vf, vl])
@@ -230,14 +257,22 @@ class DLVectorClassifier(Classifier):
         styles = np.array(['-', '--'])
         titles = ['Accuracy', 'Mean F measure', 'BCE loss']
 
+        max_f_idx = np.argmax(data[data_ids[1][1]][self._min_epochs:])
+        max_f = np.max(data[data_ids[1][1]][self._min_epochs:])
+
         for i, (ids, ls) in enumerate(zip(data_ids, labels)):
             ax[i].plot(range(self._epochs), data[ids[0]], label=ls[0], color=colors[i], linestyle=styles[0])
             ax[i].plot(range(self._epochs), data[ids[1]], label=ls[1], color=colors[i], linestyle=styles[1])
+            if i == 1:  # for F measures
+                ax[i].scatter([self._min_epochs + max_f_idx], [max_f], label='max val. F',
+                              color=colors[i], marker='*', s=32)
+                ax[i].annotate(f'{max_f:.4f}', xy=(self._min_epochs + max_f_idx, max_f), fontsize=16)
+            ax[i].axvspan(0, self._min_epochs-1, alpha=0.5, color='#e24a33')
             ax[i].legend(loc='best')
 
             ax[i].set_title(titles[i])
-            ax[i].set_xticks(range(10))
-            ax[i].set_xticklabels(range(1, 11))
+            ax[i].set_xticks(range(self._epochs))
+            ax[i].set_xticklabels(range(1, self._epochs + 1))
             ax[i].set_xlabel('Epoch')
             if i != 2:
                 ax[i].set_ylim([0., 1.])
@@ -283,8 +318,9 @@ class DLVectorClassifier(Classifier):
             'metrics': self.metrics,
             'vec_out_dims': self._vec_output_dims,
             'in_size': self._nn_params['in_size'],
-            'in_dim': None if not 'input_dim' in self._nn_params else self._nn_params['input_dim']
+            'in_dim': None if 'input_dim' not in self._nn_params else self._nn_params['input_dim'],
         })
+
         with open(save_file, 'wb') as f:
             pickle.dump(model_dict, f)
 
