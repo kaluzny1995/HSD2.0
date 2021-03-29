@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 import matplotlib.pyplot as plt
 
@@ -8,6 +8,8 @@ from ..constants import LABELS
 
 def confusion_matrices(y_trues, y_preds,
                        title='Confusion matrices with F measures for all hate-speech classes with overall score.',
+                       percentage=False,
+                       show_acc=False,
                        save_file=None):
     assert y_trues.shape[1] == 7 and y_preds.shape[1] == 7, 'Length of true values and predictions must be exactly 7!'
     fig, ax = plt.subplots(2, 4, figsize=(16, 8))
@@ -18,11 +20,16 @@ def confusion_matrices(y_trues, y_preds,
 
     for i, (p, label, y_true, y_pred) in enumerate(zip(positions, labels, y_trues, y_preds)):
 
+        a = accuracy_score(y_true=y_true, y_pred=y_pred)
         f0, f1 = f1_score(y_true=y_true, y_pred=y_pred, labels=[0, 1], average=None, zero_division=1.)
-        cm = confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1]).T
+        cm = confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
+        if percentage:
+            cm = np.array([[cmmm/np.sum(cmm) for cmmm in cmm] for cmm in cm])
+        cm = cm.T
 
+        msr = f' | acc.: {a:.2f}' if show_acc else ''
         ax[p[0]][p[1]].set_title(f'"{label}" | f0: {f0:.2f} | f1: {f1:.2f}')
-        ax[p[0]][p[1]].set_ylabel('Predicted')
+        ax[p[0]][p[1]].set_ylabel(f'Predicted{msr}')
         ax[p[0]][p[1]].set_xlabel('Actual')
 
         ax[p[0]][p[1]].imshow(cm, interpolation='nearest', cmap=plt.cm.Wistia)
@@ -32,10 +39,31 @@ def confusion_matrices(y_trues, y_preds,
 
         for i in range(2):
             for j in range(2):
-                ax[p[0]][p[1]].text(j - 0.2, i, f'{cm[i][j]}', fontsize=20)
+                ax[p[0]][p[1]].text(j - 0.2, i, f'{cm[i][j]*100:.2f}%' if percentage else f'{cm[i][j]}', fontsize=20)
 
     fig.suptitle(title)
     plt.tight_layout()
+    if save_file:
+        plt.savefig(save_file)
+    plt.show()
+
+
+def models_metric_bars(labels, metrics, title='Models best metric', color='#f9766e', save_file=None):
+    plt.figure(figsize=(16, 10))
+
+    x = range(len(labels))
+    bars = plt.bar(x, metrics, color=color)
+    plt.xticks(ticks=x, labels=labels, rotation=90)
+
+    for idx, rect in enumerate(bars):
+        plt.text(rect.get_x() + rect.get_width() / 2., rect.get_height(), f'{metrics[idx]:.4f}',
+                 ha='center', va='top', rotation=90, size=20)
+
+    plt.title(title)
+    plt.xlabel('Model')
+    plt.ylabel('Score')
+    plt.ylim((0., 1.))
+
     if save_file:
         plt.savefig(save_file)
     plt.show()

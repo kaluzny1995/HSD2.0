@@ -9,13 +9,13 @@ from ..measures import POC
 from ..constants import LABELS_V_SMALL, TOPIC_POC_SCORES_PATH, LDA_MODEL_DIR, POLISH_STOPWORDS
 
 
-def analyse_topic_POC(df, n_words=10):
+def analyse_topic_POC(df, n_words=10, save_file=TOPIC_POC_SCORES_PATH):
     csv_labels = list(['id'])
     for label in LABELS_V_SMALL:
         csv_labels.append(f'{label}_topic_POC_min')
         csv_labels.append(f'{label}_topic_POC_mean')
         csv_labels.append(f'{label}_topic_POC_max')
-    with open(TOPIC_POC_SCORES_PATH, 'w') as f:
+    with open(save_file, 'w') as f:
         csv.writer(f).writerow(csv_labels)
     del csv_labels
 
@@ -45,7 +45,7 @@ def analyse_topic_POC(df, n_words=10):
             csv_values.append(scores[f'{label}_min'])
             csv_values.append(scores[f'{label}_mean'])
             csv_values.append(scores[f'{label}_max'])
-        with open(TOPIC_POC_SCORES_PATH, 'a') as f:
+        with open(save_file, 'a') as f:
             csv.writer(f).writerow(csv_values)
         del scores, csv_values
 

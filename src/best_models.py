@@ -1,0 +1,125 @@
+from .classifiers.LexicalClassifier import LexicalClassifier
+from .classifiers.SimpleMLClassifier import SimpleMLClassifier
+from .classifiers.SimpleMLVectorClassifier import SimpleMLVectorClassifier
+from .classifiers.DLVectorClassifier import DLVectorClassifier
+
+import torch
+from sklearn.ensemble import RandomForestClassifier
+
+from .vectorizers.TextOwnTrainedFTVectorizer import TextOwnTrainedFTVectorizer
+from .vectorizers.WordPretrainedVectorizer import WordPretrainedVectorizer
+
+from .nn.models import *
+
+
+NAMES = ['Lexical Classifier',
+         'Random Forest Feature Classifier', 'Random Forest Vector Classifier',
+         'Dense Neural Network Classifier', '1D Convolutional Neural Network Classifier', 'Simple Recurrent Neural Network Classifier', 'LSTM Neural Network Classifier', 'GRU Neural Network Classifier',
+         '1D Convolutional Recurrent Neural Network Clasifier', '1D Convolutional LSTM Neural Network Clasifier', '1D Convolutional GRU Neural Network Clasifier',
+         'Dense Neural Network Classifier', '1D Convolutional Neural Network Classifier',
+         'LSTM Neural Network Classifier', 'GRU Neural Network Classifier',
+         '1D Convolutional LSTM Neural Network Clasifier', '1D Convolutional GRU Neural Network Clasifier', ]
+TYPES = ['lexical',
+         'simple machine learning', 'simple machine learning',
+         'simple deep learning', 'simple deep learning', 'simple deep learning', 'simple deep learning', 'simple deep learning',
+         'complex deep learning', 'complex deep learning', 'complex deep learning',
+         'advanced deep learning', 'advanced deep learning',
+         'advanced deep learning', 'advanced deep learning',
+         'advanced deep learning', 'advanced deep learning', ]
+SHORT_NAMES = ['Lexical',
+               'RFFC', 'RFVC',
+               'DNN', '1dCNN', 'RNN', 'LSTM', 'GRU',
+               '1dCNN+RNN', '1dCNN+LSTM', '1dCNN+GRU',
+               'DNN-HP', '1dCNN-HP',
+               'LSTM-HP', 'GRU-HP',
+               '1dCNN+LSTM-HP', '1dCNN+GRU-HP', ]
+PARAMETERS = ['{}',
+              '{criterion: gini}', '{criterion: gini}',
+              '{hidden size: 500, dropout: 0., dense layers: 1}', '{channels: 32, kernel size: 3, conv. layers: 2}',
+              '{rec. layers: 1, dropout: 0.1, bidirectional: False}', '{rec. layers: 1, dropout: 0., bidirectional: False}',
+              '{rec. layers: 1, dropout: 0., bidirectional: True}',
+              '{channels: 32, hidden size: 100, bidirectional: False}', '{channels: 8, hidden size: 100, bidirectional: True}',
+              '{channels: 32, hidden size: 100, bidirectional: False}',
+              '{epochs: 50, optimizer: AdamW, optim. params: {amsgrad: False}, scheduler: ReduceLROnPlateau, sched. params: {patience: 5, factor: 0.97}}',
+              '{epochs: 50, optimizer: AdamW, optim. params: {amsgrad: True}, scheduler: ReduceLROnPlateau, sched. params: {patience: 5, factor: 0.97}}',
+              '{epochs: 50, optimizer: AdamW, optim. params: {amsgrad: True}, scheduler: ReduceLROnPlateau, sched. params: {patience: 5, factor: 0.97}}',
+              '{epochs: 50, optimizer: AdamW, optim. params: {lr: 0.01, amsgrad: False}, scheduler: CyclicLR, sched. params: {base_lr: 0.001, max_lr: 0.01, cycle_momentum: False}}',
+              '{epochs: 50, optimizer: AdamW, optim. params: {lr: 0.01, amsgrad: False}, scheduler: CyclicLR, sched. params: {base_lr: 0.001, max_lr: 0.01, cycle_momentum: False}}',
+              '{epochs: 50, optimizer: AdamW, optim. params: {lr: 0.01, amsgrad: False}, scheduler: CyclicLR, sched. params: {base_lr: 0.001, max_lr: 0.01, cycle_momentum: False}}', ]
+
+CLF_CLASSES = [LexicalClassifier,
+               SimpleMLClassifier, SimpleMLVectorClassifier,
+               DLVectorClassifier, DLVectorClassifier, DLVectorClassifier, DLVectorClassifier,
+               DLVectorClassifier, DLVectorClassifier, DLVectorClassifier, DLVectorClassifier,
+               DLVectorClassifier, DLVectorClassifier, DLVectorClassifier,
+               DLVectorClassifier, DLVectorClassifier, DLVectorClassifier, ]
+common_vkwargs = dict({'length': 50, 'model_type': 'cbow', 'short_name': 'CBoW'})
+CLF_KWARGS = [{'k_folds': 5},
+              {'k_folds': 5, 'short_name': 'RFC-gini',
+               'clf_class': RandomForestClassifier, **{'criterion': 'gini', 'class_weight': 'balanced'}},
+              {'k_folds': 5, 'short_name': 'RFC-entropy',
+               'vec_class': TextOwnTrainedFTVectorizer, 'clf_class': RandomForestClassifier,
+               'vec_kwargs': {'length': 300, 'model_type': 's', 'short_name': 'super', 'verbose': 0},
+               **{'criterion': 'entropy', 'class_weight': 'balanced'}},
+
+              {'short_name': '500-0-1', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': DenseNet,
+               'nn_type': 'dense_w2', 'vec_params': common_vkwargs,
+               'nn_params': dict({'hidden_size': 500, 'drop_coeff': 0., 'n_linear': 1})},
+              {'short_name': '32-3-2', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': Conv1dNet,
+               'nn_type': f'conv1d_w2', 'vec_params': common_vkwargs,
+               'nn_params': dict({'out_channels': 32, 'kernel_size': 3, 'n_convs': 2})},
+              {'short_name': '1-1-0', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': RecurrentNet,
+               'nn_type': 'recurrent_w2', 'vec_params': common_vkwargs,
+               'nn_params': dict({'n_layers': 1, 'drop_prob': 0.1, 'bidirectional': False})},
+              {'short_name': '1-0-0', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': LSTMNet,
+               'nn_type': 'lstm_w2', 'vec_params': common_vkwargs,
+               'nn_params': dict({'n_layers': 1, 'drop_prob': 0., 'bidirectional': False})},
+              {'short_name': '1-0-1', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': GRUNet,
+               'nn_type': f'gru_w2', 'vec_params': common_vkwargs,
+               'nn_params': dict({'n_layers': 1, 'drop_prob': 0., 'bidirectional': True})},
+              {'short_name': '32-100-0', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': Conv1dRecurrentNet,
+               'nn_type': 'conv1d_recurrent_w2', 'vec_params': common_vkwargs,
+               'nn_params': dict({'nn_type': 'recurrent', 'out_channels': 32, 'hidden_size': 100, 'bidirectional': False})},
+              {'short_name': '8-100-1', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': Conv1dRecurrentNet,
+               'nn_type': 'conv1d_lstm_w2', 'vec_params': common_vkwargs,
+               'nn_params': dict({'nn_type': 'lstm', 'out_channels': 8, 'hidden_size': 100, 'bidirectional': True})},
+              {'short_name': '32-100-0', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': Conv1dRecurrentNet,
+               'nn_type': 'conv1d_gru_w2', 'vec_params': common_vkwargs,
+               'nn_params': dict({'nn_type': 'gru', 'out_channels': 32, 'hidden_size': 100, 'bidirectional': False})},
+
+              {'short_name': f'dense_adamw-noams-rop', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': DenseNet,
+               'nn_type': 'hparams_dense_w2',
+               'nn_hparams': dict({'_epochs': 50, '_optim': torch.optim.AdamW, '_optim_params': dict({'amsgrad': False}),
+                                   '_sched': torch.optim.lr_scheduler.ReduceLROnPlateau,
+                                   '_sched_params': dict({'patience': 5, 'factor': 0.97}), }),
+               'vec_params': common_vkwargs, 'nn_params': dict({'hidden_size': 500, 'drop_coeff': 0., 'n_linear': 1})},
+              {'short_name': 'c1d_adamw-ams-rop', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': Conv1dNet,
+               'nn_type': 'hparams_conv1d_w2',
+               'nn_hparams': dict({'_epochs': 50, '_optim': torch.optim.AdamW, '_optim_params': dict({'amsgrad': True}),
+                                   '_sched': torch.optim.lr_scheduler.ReduceLROnPlateau,
+                                   '_sched_params': dict({'patience': 5, 'factor': 0.97}),}),
+               'vec_params': common_vkwargs, 'nn_params': dict({'out_channels': 32, 'kernel_size': 3, 'n_convs': 2})},
+              {'short_name': 'lstm_adamw-ams-rop', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': LSTMNet,
+               'nn_type': 'hparams_lstm_w2',
+               'nn_hparams': dict({'_epochs': 50, '_optim': torch.optim.AdamW, '_optim_params': dict({'amsgrad': True}),
+                                   '_sched': torch.optim.lr_scheduler.ReduceLROnPlateau,
+                                   '_sched_params': dict({'patience': 5, 'factor': 0.97}),}),
+               'vec_params': common_vkwargs, 'nn_params': dict({'n_layers': 1, 'drop_prob': 0., 'bidirectional': True})},
+              {'short_name': 'gru_adamw-noams-cyc', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': GRUNet,
+               'nn_type': 'hparams_gru_w2',
+               'nn_hparams': dict({'_epochs': 50, '_optim': torch.optim.AdamW, '_optim_params': dict({'lr': 0.01, 'amsgrad': False}),
+                                   '_sched': torch.optim.lr_scheduler.CyclicLR,
+                                   '_sched_params': dict({'base_lr': 0.001, 'max_lr': 0.01, 'cycle_momentum': False}),}),
+               'vec_params': common_vkwargs, 'nn_params': dict({'n_layers': 1, 'drop_prob': 0., 'bidirectional': True})},
+              {'short_name': '1dclstm_adamw-noams-cyc', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': Conv1dRecurrentNet,
+               'nn_type': 'hparams_conv1d_w2',
+               'nn_hparams': dict({'_epochs': 50, '_optim': torch.optim.AdamW, '_optim_params': dict({'lr': 0.01, 'amsgrad': False}),
+                                   '_sched': torch.optim.lr_scheduler.CyclicLR,
+                                   '_sched_params': dict({'base_lr': 0.001, 'max_lr': 0.01, 'cycle_momentum': False}),}),
+               'vec_params': common_vkwargs, 'nn_params': dict({'nn_type': 'lstm', 'out_channels': 8, 'hidden_size': 100, 'bidirectional': True})},
+              {'short_name': '1dcgru_adamw-noams-cyc', 'k_folds': 5, 'vec_class': WordPretrainedVectorizer, 'nn_class': Conv1dRecurrentNet,
+               'nn_type': 'hparams_conv1d_w2',
+               'nn_hparams': dict({'_epochs': 50, '_optim': torch.optim.AdamW, '_optim_params': dict({'lr': 0.01, 'amsgrad': False}),
+                                   '_sched': torch.optim.lr_scheduler.CyclicLR,
+                                   '_sched_params': dict({'base_lr': 0.001, 'max_lr': 0.01, 'cycle_momentum': False}),}),
+               'vec_params': common_vkwargs, 'nn_params': dict({'nn_type': 'gru', 'out_channels': 8, 'hidden_size': 100, 'bidirectional': True})}, ]

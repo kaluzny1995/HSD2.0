@@ -8,15 +8,15 @@ from ..constants import (DUPLICATED_PATH, LEMMAS_PATH, HATEFUL_LEMM_DIR, VULGARS
                          LABELS_SMALL, LABELS_V_SMALL)
 
 
-def load_lemmatized_tweets():
-    df = pd.read_csv(DUPLICATED_PATH)
+def load_lemmatized_tweets(tweets_path=DUPLICATED_PATH, lemmatized_path=LEMMAS_PATH):
+    df = pd.read_csv(tweets_path)
     df = df[['id', 'tweet']]
 
-    if not os.path.exists(LEMMAS_PATH):
+    if not os.path.exists(lemmatized_path):
         df['lemmatized'] = list([lemmatize_text(tweet) for tweet in tqdm(df['tweet'])])
-        df[['id', 'lemmatized']].to_csv(LEMMAS_PATH, index=False)
+        df[['id', 'lemmatized']].to_csv(lemmatized_path, index=False)
     else:
-        df['lemmatized'] = pd.read_csv(LEMMAS_PATH)['lemmatized']
+        df['lemmatized'] = pd.read_csv(lemmatized_path)['lemmatized']
 
     return df
 

@@ -39,7 +39,7 @@ class LSTMNet(torch.nn.Module):
 
 class GRUNet(torch.nn.Module):
     def __init__(self, in_size=256, hidden_size=100, out_size=len(LABELS),
-                 n_layers=4, drop_prob=0.1, bidirectional=False):
+                 n_layers=1, drop_prob=0.1, bidirectional=True):
         super(GRUNet, self).__init__()
         self.hidden_size = hidden_size if not bidirectional else hidden_size * 2
         self.n_layers = n_layers

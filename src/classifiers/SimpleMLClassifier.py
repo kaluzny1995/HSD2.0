@@ -3,6 +3,8 @@ import pandas as pd
 import pickle
 
 from skmultilearn.model_selection import IterativeStratification
+from sklearn.linear_model import SGDClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.metrics import f1_score
 
@@ -55,7 +57,8 @@ class SimpleMLClassifier(Classifier):
             X_train, X_test = X[train_index], X[test_index]
             y_train, y_test = y[train_index], y[test_index]
 
-            if self.short_name.lower().split('-')[0] in ['sgd', 'lrc']:
+            #if self.short_name.lower().split('-')[0] in ['sgd', 'lrc']:
+            if self._clf_class in [SGDClassifier, LogisticRegression]:
                 clf = OneVsRestClassifier(self._clf_class(**self._clf_kwargs))
             else:
                 clf = self._clf_class(**self._clf_kwargs)
@@ -93,6 +96,8 @@ class SimpleMLClassifier(Classifier):
             save_file = self.default_save_file
 
         model_dict = dict({
+            'name': self.name,
+            'short_name': self.short_name,
             'f': self.best_f,
             'split_ids': self.best_split_ids,
             'clf': self.best_clf
@@ -107,6 +112,8 @@ class SimpleMLClassifier(Classifier):
 
         with open(load_file, 'rb') as f:
             model_dict = pickle.load(f)
+        self.name = model_dict['name']
+        self.short_name = model_dict['short_name']
         self.best_f = model_dict['f']
         self.best_split_ids = model_dict['split_ids']
         self.best_clf = model_dict['clf']

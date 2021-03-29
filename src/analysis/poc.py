@@ -7,13 +7,13 @@ from ..measures import POC
 from ..constants import LABELS_V_SMALL, POC_SCORES_PATH, POLISH_STOPWORDS
 
 
-def analyse_POC(df, phrs):
+def analyse_POC(df, phrs, save_file=POC_SCORES_PATH):
     csv_labels = list(['id'])
     for label in LABELS_V_SMALL:
         csv_labels.append(f'{label}_POC_min')
         csv_labels.append(f'{label}_POC_mean')
         csv_labels.append(f'{label}_POC_max')
-    with open(POC_SCORES_PATH, 'w') as f:
+    with open(save_file, 'w') as f:
         csv.writer(f).writerow(csv_labels)
     del csv_labels
 
@@ -39,7 +39,7 @@ def analyse_POC(df, phrs):
             csv_values.append(scores[f'{label}_min'])
             csv_values.append(scores[f'{label}_mean'])
             csv_values.append(scores[f'{label}_max'])
-        with open(POC_SCORES_PATH, 'a') as f:
+        with open(save_file, 'a') as f:
             csv.writer(f).writerow(csv_values)
         del scores, csv_values
 

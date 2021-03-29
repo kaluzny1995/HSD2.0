@@ -6,14 +6,14 @@ from ..utils.texts import text_sentiment, text_numbers
 from ..constants import OTHER_SCORES_PATH
 
 
-def analyse_other(df):
+def analyse_other(df, save_file=OTHER_SCORES_PATH):
     csv_labels = list([
         'id',
         's_neg', 's_neu', 's_pos',
         'n_chars', 'n_sylls', 'n_words', 'nu_words',
         'nl_chars', 'nl_sylls', 'nl_words', 'nlu_words',
     ])
-    with open(OTHER_SCORES_PATH, 'w') as f:
+    with open(save_file, 'w') as f:
         csv.writer(f).writerow(csv_labels)
     del csv_labels
 
@@ -30,7 +30,7 @@ def analyse_other(df):
             scores['chars'], scores['sylls'], scores['words'], scores['u_words'],
             scores['l_chars'], scores['l_sylls'], scores['l_words'], scores['l_u_words']
         ])
-        with open(OTHER_SCORES_PATH, 'a') as f:
+        with open(save_file, 'a') as f:
             csv.writer(f).writerow(csv_values)
         del scores, csv_values
 

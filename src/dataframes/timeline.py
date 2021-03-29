@@ -4,6 +4,7 @@ from datetime import datetime
 
 from ..utils.dates import daterange
 from ..utils.ops import closing_empty_spaces
+from ..constants import LABELS
 
 
 def get_stats(df, hate_type=None, month_names=None, weekday_names=None):
@@ -75,14 +76,48 @@ def get_stats(df, hate_type=None, month_names=None, weekday_names=None):
 
 # highlight empty spaces in timeline dataframe
 # (p - positive element | n - negative element | threshold - min. empty space length)
-def find_empty_spaces(df_timeline, p=.0, n=None, threshold=10):
+def find_empty_spaces(df_timeline, p=.0, n=None, threshold=10, attribute='count'):
     df = pd.DataFrame(df_timeline.values, columns=df_timeline.columns, index=df_timeline.index)
 
     # find all positions with empty values and highlight them as .0 oppositely None
-    empty_space = np.where(pd.isna(df['count']), .0, None)
+    empty_space = np.where(pd.isna(df[attribute]), p, n)
     # reduce small empty spaces (with length under threshold)
     empty_space, empty_space_bounds = closing_empty_spaces(empty_space, p=.0, n=None,
                                                            threshold=threshold)
     df['empty space'] = empty_space
 
     return df, empty_space_bounds
+
+
+def get_monthly_stats(df, labeled=True):
+    all_dates = list(daterange(df['date'].iloc[0], df['date'].iloc[-1]))
+    all_year_months = np.unique([f'{d.year}-{"0" + str(d.month) if d.month < 10 else d.month}' for d in all_dates])
+
+    stats = list([])
+    labels = ['all'] + LABELS if labeled else ['all']
+
+    for label in labels:
+        df_label = df[df.columns]
+        if label != 'all':
+            df_label = df[df[label] == 1.0][['date']]
+
+        df_ymc = pd.DataFrame({'year-month': all_year_months})
+        ym = list(['-'.join(d.split('-')[:-1]) for d in df_label['date']])
+        ym, cnt = np.unique(ym, return_counts=True)
+        df_ymc = df_ymc.merge(pd.DataFrame({
+            'year-month': ym,
+            'count': cnt
+        }), left_on='year-month', right_on='year-month', how='left')
+        stats.append(df_ymc['count'])
+
+    df_stats = pd.DataFrame(np.array(stats).T, columns=labels, index=all_year_months)
+
+    return df_stats
+
+
+def empty_date_intervals(df, threshold=10):
+    dff = get_stats(df)[-1]
+    dff, empty_ids = find_empty_spaces(dff, threshold=threshold)
+
+    return list([f'{dff.iloc[es[0]].name.strftime("%Y-%m-%d")} - ' +
+                 f'{dff.iloc[es[1]].name.strftime("%Y-%m-%d")}' for es in empty_ids])

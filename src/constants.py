@@ -1,5 +1,5 @@
 # lists
-with open('./data/other/polish_stopwords.txt', 'r') as f:\
+with open('./data/other/polish_stopwords.txt', 'r') as f:
     POLISH_STOPWORDS = f.read().split('\n')[:-1]
 MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
                'July', 'August', 'September', 'October', 'November', 'December']
@@ -32,9 +32,12 @@ VULGARS_EXT_DIR = 'data/vulgars/ext_{}.txt'
 
 # paths - tweets
 RAW_PATH = 'data/tweets_sady/main/sady_infos_raw.csv'
-ANNOTATED_PATH = 'data/tweets_sady/main/sady_date_annotated.csv'
 SANITIZED_PATH = 'data/tweets_sady/main/sady_infos_sanitized.csv'
+ANNOTATED_PATH = 'data/tweets_sady/main/sady_date_annotated.csv'
 COMBINED_PATH = 'data/tweets_sady/main/sady_combined.csv'
+# paths - testonly tweets
+ANNOTATED_TESTONLY_PATH = 'data/tweets_sady/main/sady_date_annotated_testonly.csv'
+COMBINED_TESTONLY_PATH = 'data/tweets_sady/main/sady_combined_testonly.csv'
 
 # paths - supplement tweets
 SUPPLEMENT_RAW_DIR = 'data/tweets_supplement/main/sady_{}_raw.csv'
@@ -47,6 +50,14 @@ DUPLICATED_PATH = 'data/tweets_sady/processed/sady_duplicated.csv'
 POC_SCORES_PATH = 'data/tweets_sady/processed/poc_scores.csv'
 TOPIC_POC_SCORES_PATH = 'data/tweets_sady/processed/topic_poc_scores.csv'
 OTHER_SCORES_PATH = 'data/tweets_sady/processed/other_scores.csv'
+# paths - testonly processed tweets
+LEMMAS_TESTONLY_PATH = 'data/tweets_sady/processed/lemmas_testonly.csv'
+POC_SCORES_TESTONLY_PATH = 'data/tweets_sady/processed/poc_scores_testonly.csv'
+TOPIC_POC_SCORES_TESTONLY_PATH = 'data/tweets_sady/processed/topic_poc_scores_testonly.csv'
+OTHER_SCORES_TESTONLY_PATH = 'data/tweets_sady/processed/other_scores_testonly.csv'
+
+# paths - data results
+RESULTS_DIR = 'data/results/{}.csv'
 
 # paths - models
 LDA_MODEL_DIR = 'models/lda/lda_{}.pkl'
@@ -83,6 +94,8 @@ DLGRUC_CHART_DIR = 'charts/08e. dl_gru_classifier/{}.png'
 DLCRC_CHART_DIR = 'charts/08f. dl_conv1d_recurrent_classifier/{}.png'
 DLCLSTMC_CHART_DIR = 'charts/08g. dl_conv1d_lstm_classifier/{}.png'
 DLCGRUC_CHART_DIR = 'charts/08h. dl_conv1d_gru_classifier/{}.png'
+DLHP_CHART_DIR = 'charts/09. dl_hparams/{}.png'
+BEST_CHART_DIR = 'charts/10. best_models/{}.png'
 
 # paths - other
 WORDNET_PATH = 'models/plwordnet_3_0/plwordnet-3.0.xml'

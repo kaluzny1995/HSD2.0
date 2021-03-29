@@ -2,6 +2,8 @@ import csv
 import numpy as np
 import pandas as pd
 
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
 from ..constants import LABELS
 
 
@@ -68,3 +70,46 @@ def reduce_to_polish(in_file, out_file):
             for row in reader:
                 if row[11] == 'pl':
                     writer.writerow(row)
+
+
+def models_quality_results(y_trues, y_preds_s, model_names, additionals=None, additional_titles=None, save_file=None):
+    if additionals and additional_titles:
+        assert len(additionals) == len(additional_titles), 'Additional data must have the same length as titles!'
+
+    def adapt(y):
+        y = np.array([[yy.T[i] for yy in y] for i in range(y.shape[2])])
+        y_all = np.array([np.concatenate([yy[i] for yy in y]) for i in range(y.shape[1])])
+        y = list([*y, y_all])
+
+        return y
+
+    labels = LABELS + ['overall']
+    y_trues_s = np.array([y_trues for _ in range(len(model_names))])
+    y_trues_s = adapt(y_trues_s)
+    y_preds_s = adapt(y_preds_s)
+
+    df = pd.DataFrame({
+        'model': model_names
+    })
+
+    for i, (label, y_true, y_pred) in enumerate(zip(labels, y_trues_s, y_preds_s)):
+
+        df[f'{label}_A'] = np.array([accuracy_score(y_true=y_t, y_pred=y_p) for y_t, y_p in zip(y_true, y_pred)])
+        measure_fns = list([precision_score, recall_score, f1_score])
+        for measure_fn, measure_l in zip(measure_fns, ['P', 'R', 'F']):
+            m0, m1 = np.array([measure_fn(y_true=y_t, y_pred=y_p, labels=[0, 1], average=None, zero_division=1.)
+                               for y_t, y_p in zip(y_true, y_pred)]).T
+            df[f'{label}_{measure_l}0'] = m0
+            df[f'{label}_{measure_l}1'] = m1
+
+    if additionals:
+        add_titles = list([f'Add.: {i+1}' for i in range(len(additionals))])\
+            if not additional_titles else additional_titles
+        df_add = pd.DataFrame(np.array(additionals).T, columns=add_titles) #chk
+        df = combine_row_wisely([df, df_add])
+
+    if save_file:
+        df.to_csv(save_file, index=False)
+    df = df.set_index('model')
+
+    return df

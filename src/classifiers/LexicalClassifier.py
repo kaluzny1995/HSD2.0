@@ -19,8 +19,9 @@ from ..constants import (LABELS, LABELS_SMALL, SCORE_TYPES, POC_LABELS, OPTIM_PO
 
 
 class LexicalClassifier(Classifier):
-    def __init__(self, name='LexicalClassifier', k_folds=10):
+    def __init__(self, name='LexicalClassifier', short_name='lex', k_folds=10):
         super(LexicalClassifier, self).__init__(name=name)
+        self.short_name = short_name
         self.k_folds = k_folds
 
         self._ext_phrases = load_ext_phrases()
@@ -191,9 +192,11 @@ class LexicalClassifier(Classifier):
 
         for i in range(X.shape[0]):
             for j, lsmall in enumerate(self._labels_small):
-                if X[i][j][0] >= self.best_optimal_POCs[f'pos_{lsmall}_min'] and \
-                        X[i][j][1] >= self.best_optimal_POCs[f'pos_{lsmall}_mean'] and \
-                        X[i][j][2] >= self.best_optimal_POCs[f'pos_{lsmall}_max']:
+                #if X[i][j][0] >= self.best_optimal_POCs[f'pos_{lsmall}_min'] and \
+                #        X[i][j][1] >= self.best_optimal_POCs[f'pos_{lsmall}_mean'] and \
+                #        X[i][j][2] >= self.best_optimal_POCs[f'pos_{lsmall}_max']:
+                #    pred[i][j] = 1.
+                if X[i][j][2] >= self.best_optimal_POCs[f'pos_{lsmall}_max']:
                     pred[i][j] = 1.
 
         return pred
@@ -209,6 +212,8 @@ class LexicalClassifier(Classifier):
     def save(self, save_file=LC_MODEL_DIR):
         super().save(save_file)
         model_dict = dict({
+            'name': self.name,
+            'short_name': self.short_name,
             'f1_s': self.best_f1s,
             'split_ids': self.best_split_ids,
             'optims': self.best_optimal_POCs
@@ -220,6 +225,8 @@ class LexicalClassifier(Classifier):
         super().load(load_file)
         with open(load_file, 'rb') as f:
             model_dict = pickle.load(f)
+        self.name = model_dict['name']
+        self.short_name = model_dict['short_name']
         self.best_f1s = model_dict['f1_s']
         self.best_split_ids = model_dict['split_ids']
         self.best_optimal_POCs = model_dict['optims']

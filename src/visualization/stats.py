@@ -79,7 +79,6 @@ def tweets_timeline(df, empty_spaces=None, threshold=100, empty_space_threshold=
         for es in empty_spaces:
             i = df.index[es[0]]
             j = df.index[es[1]]
-            y_pos = (df['count'].max() - df['count'].min()) // 2
             ax.axvspan(i, j, alpha=0.5, color='#e24a33')
             ax.text(i, threshold + 5, f'{datetime.strftime(i, "%d.%m.%Y")}', rotation='90')
             ax.text(j, threshold + 5, f'{datetime.strftime(j, "%d.%m.%Y")}', rotation='90', ha='right')
@@ -121,7 +120,7 @@ def popularity_hists(df, attribute='likes', title=None, color='#f9766e', save_fi
     fig.legend(h, ln, loc='upper right')
 
     fig.text(0., 0.5, 'Count percentage', fontsize=16, va='center', rotation='vertical')
-    fig.text(0.5, 0., f'{attribute.capitalize()} count', fontsize=16, ha='center')
+    fig.text(0.5, 0., f'{attribute.capitalize()} normalized count', fontsize=16, ha='center')
 
     if not title:
         m = dict({'likes': 'like', 'replies': 'reply', 'retweets': 'retweet'})
@@ -133,3 +132,62 @@ def popularity_hists(df, attribute='likes', title=None, color='#f9766e', save_fi
         plt.savefig(save_file)
     plt.show()
 
+
+def monthly_hateful_amount_lines(df, title='Hateful tweets monthly amount percentages.', threshold=4, save_file=None):
+    fig, ax = plt.subplots(1, 1)
+
+    dff = df[df.columns]
+    for label in LABELS:
+        dff[label] = dff[label] / dff['all'] * 100
+    _, empty_spaces = find_empty_spaces(dff, threshold=1, attribute='all')
+    dff = dff.fillna(.0)
+    if empty_spaces:
+        for es in empty_spaces:
+            dff.iloc[es[0]:es[1]] = None
+    dff.drop('all', axis=1).plot(figsize=(16, 10), ax=ax)
+
+    # highlight empty spaces
+    if empty_spaces:
+        for es in empty_spaces:
+            i = dff.index[es[0]]
+            j = dff.index[es[1]]
+            ax.axvspan(es[0] - 1, es[1], alpha=0.5, color='#e24a33')
+            ax.text(es[0] - 0.5, threshold, i, rotation='90', size=18)
+            ax.text(es[1] - 0.5, threshold, j, rotation='90', size=18, ha='right')
+
+    plt.xlabel('Year-month')
+    plt.ylabel('% amount')
+    plt.title(title)
+
+    if save_file:
+        plt.savefig(save_file)
+    plt.show()
+
+
+def monthly_amount_line(df, title='Tweets monthly amounts (with lacks of data).', threshold=2800, save_file=None):
+    fig, ax = plt.subplots(1, 1)
+
+    dff = df[df.columns]
+    _, empty_spaces = find_empty_spaces(dff, threshold=1, attribute='all')
+
+    if empty_spaces:
+        for es in empty_spaces:
+            dff.iloc[es[0]:es[1]] = None
+    dff.plot(figsize=(16, 10), ax=ax, legend=None, color='#619dff')
+
+    # highlight empty spaces
+    if empty_spaces:
+        for es in empty_spaces:
+            i = dff.index[es[0]]
+            j = dff.index[es[1]]
+            ax.axvspan(es[0] - 1, es[1], alpha=0.5, color='#e24a33')
+            ax.text(es[0]-1, threshold, i, rotation='90', size=14)
+            ax.text(es[1]+0.5, threshold, j, rotation='90', size=14, ha='right')
+
+    plt.xlabel('Year-month')
+    plt.ylabel('Amount')
+    plt.title(title)
+
+    if save_file:
+        plt.savefig(save_file)
+    plt.show()

@@ -51,23 +51,25 @@ class DLVectorClassifier(Classifier):
         self._nn_class = nn_class
         self._vec_params = dict({}) if not vec_params else vec_params
         self._vec_output_dims = vec_output_dims
+        self._nn_hparams = dict({}) if not nn_hparams else nn_hparams
         self._nn_params = dict({}) if not nn_params else nn_params
         if not vec_analysis:
-            self.default_save_file = DLVC_MODEL_DIR.replace('[]', self.nn_type).replace('{}', self.short_name)
+            nn_t = self.nn_type if self.nn_type.find('hparams') < 0 else f'hparams_{self.nn_type.split("_")[-1]}'
+            self.default_save_file = DLVC_MODEL_DIR.replace('[]', nn_t).replace('{}', self.short_name)
             self.default_model_save_file = self.default_save_file.replace('.pkl', '.pt')
         else:
             self.default_save_file = DLCV_MODEL_DIR.replace('{}', self.short_name)
             self.default_model_save_file = self.default_save_file.replace('.pkl', '.pt')
 
-        self._train_bs = default_hyperparams['_train_bs'] if '_train_bs' not in self._nn_params else nn_hparams['_train_bs']
-        self._valid_bs = default_hyperparams['_valid_bs'] if '_valid_bs' not in self._nn_params else nn_hparams['_valid_bs']
-        self._test_bs = default_hyperparams['_test_bs'] if '_test_bs' not in self._nn_params else nn_hparams['_test_bs']
-        self._optim = default_hyperparams['_optim'] if '_optim' not in self._nn_params else nn_hparams['_optim']
-        self._optim_params = default_hyperparams['_optim_params'] if '_optim_params' not in self._nn_params else nn_hparams['_optim_params']
-        self._sched = default_hyperparams['_sched'] if '_sched' not in self._nn_params else nn_hparams['_sched']
-        self._sched_params = default_hyperparams['_sched_params'] if '_sched_params' not in self._nn_params else nn_hparams['_sched_params']
-        self._epochs = default_hyperparams['_epochs'] if '_epochs' not in self._nn_params else nn_hparams['_epochs']
-        self._min_epochs = default_hyperparams['_min_epochs'] if '_min_epochs' not in self._nn_params else nn_hparams['_min_epochs']
+        self._train_bs = default_hyperparams['_train_bs'] if '_train_bs' not in self._nn_hparams else nn_hparams['_train_bs']
+        self._valid_bs = default_hyperparams['_valid_bs'] if '_valid_bs' not in self._nn_hparams else nn_hparams['_valid_bs']
+        self._test_bs = default_hyperparams['_test_bs'] if '_test_bs' not in self._nn_hparams else nn_hparams['_test_bs']
+        self._optim = default_hyperparams['_optim'] if '_optim' not in self._nn_hparams else nn_hparams['_optim']
+        self._optim_params = default_hyperparams['_optim_params'] if '_optim_params' not in self._nn_hparams else nn_hparams['_optim_params']
+        self._sched = default_hyperparams['_sched'] if '_sched' not in self._nn_hparams else nn_hparams['_sched']
+        self._sched_params = default_hyperparams['_sched_params'] if '_sched_params' not in self._nn_hparams else nn_hparams['_sched_params']
+        self._epochs = default_hyperparams['_epochs'] if '_epochs' not in self._nn_hparams else nn_hparams['_epochs']
+        self._min_epochs = default_hyperparams['_min_epochs'] if '_min_epochs' not in self._nn_hparams else nn_hparams['_min_epochs']
 
         assert self._min_epochs < self._epochs, 'Number of minimal epochs must be lower than number of epochs!'
 
@@ -240,7 +242,7 @@ class DLVectorClassifier(Classifier):
 
                 if epoch < self._epochs - 1:
                     tt.set_postfix_str(f'Epoch: {epoch + 2}/{self._epochs} | Mean train/valid. loss: {tl[-1]:.4f}/{vl[-1]:.4f}')
-
+            # print(f'Fold: {i+1}/{self.k_folds} | Train F: {np.max(tf):.4f} | Valid. F: {np.max(vf):.4f}')
             if best_fold_f <= np.max(vf):
                 self.metrics = np.array([ta, tf, tl, va, vf, vl])
                 best_fold_f = np.max(vf)
@@ -271,8 +273,13 @@ class DLVectorClassifier(Classifier):
             ax[i].legend(loc='best')
 
             ax[i].set_title(titles[i])
-            ax[i].set_xticks(range(self._epochs))
-            ax[i].set_xticklabels(range(1, self._epochs + 1))
+            if self._epochs <= 20:
+                ax[i].set_xticks(range(self._epochs))
+                ax[i].set_xticklabels(range(1, self._epochs + 1))
+            else:
+                freq = 5
+                ax[i].set_xticks(range(0, self._epochs, freq))
+                ax[i].set_xticklabels(range(1, self._epochs + 1, freq))
             ax[i].set_xlabel('Epoch')
             if i != 2:
                 ax[i].set_ylim([0., 1.])
@@ -313,6 +320,8 @@ class DLVectorClassifier(Classifier):
         if not save_file:
             save_file = self.default_save_file
         model_dict = dict({
+            'name': self.name,
+            'short_name': self.short_name,
             'f': self.best_f,
             'split_ids': self.best_split_ids,
             'metrics': self.metrics,
@@ -334,6 +343,8 @@ class DLVectorClassifier(Classifier):
             load_file = self.default_save_file
         with open(load_file, 'rb') as f:
             model_dict = pickle.load(f)
+        self.name = model_dict['name']
+        self.short_name = model_dict['short_name']
         self.best_f = model_dict['f']
         self.best_split_ids = model_dict['split_ids']
         self.metrics = model_dict['metrics']
