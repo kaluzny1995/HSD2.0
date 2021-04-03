@@ -92,7 +92,7 @@ class TweetSanitizer:
                         writer.writerow(header)
 
                 for row in reader:
-                    if not reduce_to_polish or row[11] == 'pl':
+                    if len(row) > 35 and (not reduce_to_polish or row[11] == 'pl' or row[12] == 'pl'):
                         if save_texts_only:
                             if full_sanitize:
                                 text, _, _ = self.full_sanitization(row[10])

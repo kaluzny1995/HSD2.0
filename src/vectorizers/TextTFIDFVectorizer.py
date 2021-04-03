@@ -29,7 +29,8 @@ class TextTFIDFVectorizer(Vectorizer):
             X = X.values.flatten()
 
         use_idf = self.type == 'tfidf'
-        self._model = TfidfVectorizer(max_features=self.length, use_idf=use_idf, stop_words=POLISH_STOPWORDS)
+        self._model = TfidfVectorizer(max_features=self.length, ngram_range=(1, 10), analyzer='char', use_idf=use_idf,
+                                      stop_words=POLISH_STOPWORDS)
         self._model.fit(X)
 
     def transform(self, X):

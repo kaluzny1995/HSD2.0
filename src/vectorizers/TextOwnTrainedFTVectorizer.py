@@ -10,12 +10,12 @@ from ..constants import TOTFTV_MODEL_DIR, FT_OWN_MODEL_DIR, FT_DATA_DIR
 
 
 class TextOwnTrainedFTVectorizer(Vectorizer):
-    def __init__(self, name='TextOwnTrainedFTVectorizer', length=300, model_type='u', short_name='unsuper', verbose=0):
+    def __init__(self, name='TextOwnTrainedFTVectorizer', length=300, epochs=10, model_type='u', short_name='unsuper', verbose=0):
         super(TextOwnTrainedFTVectorizer, self).__init__(name=name)
         assert model_type in ['u', 's'], 'Model type must be "u" (unsupervisedly trained) or "s" (supervisedly trained)!'
 
         self.length = length
-        self._epochs = 10
+        self._epochs = epochs
         self.type = model_type
         self.short_name = short_name
         self._verbose = verbose
@@ -45,10 +45,12 @@ class TextOwnTrainedFTVectorizer(Vectorizer):
         file = FT_DATA_DIR.replace('{}', self.type)
         if self._verbose:
             print(f'Training model {"unsupervisedly" if self.type == "u" else "supervisedly"}...')
-        if self.type == 's':
-            self._model = fasttext.train_unsupervised(file, dim=self.length, epoch=self._epochs)
+        if self.type == 'u':
+            self._model = fasttext.train_unsupervised(file, dim=self.length, minn=2, maxn=10,
+                                                      epoch=self._epochs, lr=0.5)
         else:
-            self._model = fasttext.train_supervised(file, dim=self.length, epoch=self._epochs)
+            self._model = fasttext.train_supervised(file, dim=self.length, wordNgrams=2, bucket=200000,
+                                                    epoch=self._epochs, lr=0.5, loss='ova')
         if self._verbose:
             print('Training finished.')
 

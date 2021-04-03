@@ -4,8 +4,8 @@ from ...constants import LABELS
 
 
 class Conv1dRecurrentNet(torch.nn.Module):
-    def __init__(self, nn_type='recurrent', in_size=100, in_channels=3, out_channels=32, kernel_size=5, n_convs=2, out_size=len(LABELS),
-                 input_dim=(3, 256), hidden_size=100, n_layers=1, drop_prob=0.1, bidirectional=False):
+    def __init__(self, nn_type='recurrent', in_size=100, in_channels=3, out_channels=32, kernel_size=5, n_convs=3, out_size=len(LABELS),
+                 input_dim=(3, 256), hidden_size=100, n_layers=1, drop_prob=0.3, bidirectional=True):
         super(Conv1dRecurrentNet, self).__init__()
 
         self.__in_size = in_size

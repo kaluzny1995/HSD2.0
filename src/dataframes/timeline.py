@@ -121,3 +121,20 @@ def empty_date_intervals(df, threshold=10):
 
     return list([f'{dff.iloc[es[0]].name.strftime("%Y-%m-%d")} - ' +
                  f'{dff.iloc[es[1]].name.strftime("%Y-%m-%d")}' for es in empty_ids])
+
+
+def monthly_word_counts(df):
+    dff = df[df.columns]
+    all_dates = list(daterange(dff['date'].iloc[0], dff['date'].iloc[-1]))
+    all_year_months = np.unique([f'{d.year}-{"0" + str(d.month) if d.month < 10 else d.month}' for d in all_dates])
+
+    dff['year-month'] = list(['-'.join(d.split('-')[:-1]) for d in dff['date'].values])
+    dff['word count'] = list([len(tweet.split(' ')) for tweet in dff['tweet'].astype(str).values])
+    dff = dff.drop(['tweet', 'date'], axis=1).groupby('year-month')['word count'].apply(np.median).reset_index()
+
+    dff = pd.DataFrame({
+        'year-month': all_year_months
+    }).merge(dff, how='left', left_on='year-month', right_on='year-month')
+    dff = dff.set_index('year-month')
+
+    return dff

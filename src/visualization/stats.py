@@ -191,3 +191,32 @@ def monthly_amount_line(df, title='Tweets monthly amounts (with lacks of data).'
     if save_file:
         plt.savefig(save_file)
     plt.show()
+
+
+def monthly_word_count_line(df, title='Year-monthly median tweet word counts.', threshold=15, save_file=None):
+    fig, ax = plt.subplots(1, 1)
+
+    dff = df[df.columns]
+    _, empty_spaces = find_empty_spaces(dff, threshold=1, attribute='word count')
+
+    if empty_spaces:
+        for es in empty_spaces:
+            dff.iloc[es[0]:es[1]] = None
+    dff.plot(figsize=(16, 10), ax=ax, legend=None, color='#619dff')
+
+    # highlight empty spaces
+    if empty_spaces:
+        for es in empty_spaces:
+            i = dff.index[es[0]]
+            j = dff.index[es[1]]
+            ax.axvspan(es[0] - 1, es[1], alpha=0.5, color='#e24a33')
+            ax.text(es[0] - 1, threshold, i, rotation='90', size=14)
+            ax.text(es[1], threshold, j, rotation='90', size=14, ha='right')
+
+    plt.xlabel('Year-month')
+    plt.ylabel('Words count')
+    plt.title(title)
+
+    if save_file:
+        plt.savefig(save_file)
+    plt.show()

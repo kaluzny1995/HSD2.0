@@ -40,8 +40,15 @@ ANNOTATED_TESTONLY_PATH = 'data/tweets_sady/main/sady_date_annotated_testonly.cs
 COMBINED_TESTONLY_PATH = 'data/tweets_sady/main/sady_combined_testonly.csv'
 
 # paths - supplement tweets
-SUPPLEMENT_RAW_DIR = 'data/tweets_supplement/main/sady_{}_raw.csv'
-SUPPLEMENT_SANITIZED_DIR = 'data/tweets_supplement/main/sady_{}_sanitized.csv'
+SUPPLEMENT_RAW_DIR = 'data/tweets_supplement/sady_{}_raw.csv'
+SUPPLEMENT_SANITIZED_DIR = 'data/tweets_supplement/sady_{}_sanitized.csv'
+
+# paths - all tweets
+ALL_SANITIZED_PATH = 'data/tweets_2014_2020/sady_all_sanitized.csv'
+ALL_LEMMAS_PATH = 'data/tweets_2014_2020/all_lemmas.csv'
+ALL_POC_SCORES_PATH = 'data/tweets_2014_2020/all_poc_scores.csv'
+ALL_TOPIC_POC_SCORES_PATH = 'data/tweets_2014_2020/all_topic_poc_scores.csv'
+ALL_OTHER_SCORES_PATH = 'data/tweets_2014_2020/all_other_scores.csv'
 
 # paths - processed tweets
 ANNOTATION_SHEET_PATH = 'data/tweets_sady/processed/annotation_sheet{}.csv'

@@ -101,6 +101,7 @@ def models_quality_results(y_trues, y_preds_s, model_names, additionals=None, ad
                                for y_t, y_p in zip(y_true, y_pred)]).T
             df[f'{label}_{measure_l}0'] = m0
             df[f'{label}_{measure_l}1'] = m1
+            df[f'{label}_mean_{measure_l}'] = (m0 + m1)/2
 
     if additionals:
         add_titles = list([f'Add.: {i+1}' for i in range(len(additionals))])\
