@@ -59,7 +59,7 @@ class TextOwnTrainedFTVectorizer(Vectorizer):
         if type(X) == pd.DataFrame:
             X = X.values.flatten()
 
-        return np.array([self._model.get_sentence_vector(x) for x in X])
+        return np.array([self._model.get_sentence_vector(str(x).replace('\n', '')) for x in X])
 
     def fit_transform(self, X):
         super().fit_transform(X)

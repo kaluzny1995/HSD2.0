@@ -65,6 +65,7 @@ OTHER_SCORES_TESTONLY_PATH = 'data/tweets_sady/processed/other_scores_testonly.c
 
 # paths - data results
 RESULTS_DIR = 'data/results/{}.csv'
+PREDICTION_RESULTS_DIR = 'data/results/{}.csv'
 
 # paths - models
 LDA_MODEL_DIR = 'models/lda/lda_{}.pkl'
@@ -103,6 +104,7 @@ DLCLSTMC_CHART_DIR = 'charts/08g. dl_conv1d_lstm_classifier/{}.png'
 DLCGRUC_CHART_DIR = 'charts/08h. dl_conv1d_gru_classifier/{}.png'
 DLHP_CHART_DIR = 'charts/09. dl_hparams/{}.png'
 BEST_CHART_DIR = 'charts/10. best_models/{}.png'
+SSA_CHART_DIR = 'charts/11. statistical_secondary_analysis/{}.png'
 
 # paths - other
 WORDNET_PATH = 'models/plwordnet_3_0/plwordnet-3.0.xml'

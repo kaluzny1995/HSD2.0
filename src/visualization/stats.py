@@ -18,15 +18,15 @@ def tweet_yearly_counts_pie(df, show_legend=True, title='Tweet yearly counts.', 
 
     def annotate(pct, allvals):
         absolute = int(pct / 100. * np.sum(allvals))
-        return f'{pct:.2f}%\n({absolute:d})'
+        return f'{pct:.2f}% - ({absolute:d})'
 
-    t_props = {'color': 'w', 'fontsize': 20, 'weight': 'bold'}
-    l_props = {'size': 20}
+    t_props = {'color': 'w', 'fontsize': 14, 'weight': 'bold'}
+    l_props = {'size': 16}
 
     wedges, _, _ = ax.pie(data, autopct=lambda pct: annotate(pct, data), textprops=t_props)
 
     if show_legend:
-        leg = ax.legend(wedges, labels, loc="upper right", fontsize=20)
+        leg = ax.legend(wedges, labels, loc="upper left", fontsize=20)
         leg.set_title("Year", prop=l_props)
 
     ax.set_title(title)
@@ -35,16 +35,36 @@ def tweet_yearly_counts_pie(df, show_legend=True, title='Tweet yearly counts.', 
     plt.show()
 
 
-def tweet_count_bars(df_m, df_wd, df_h, title='All tweets in figures.', save_file=None):
+def tweet_count_bars(df_m, df_wd, df_h, title='All tweets in figures.', percentages=False, thr=0.14, save_file=None):
     fig, ax = plt.subplots(1, 3, figsize=(20, 6))
 
-    df_m.plot(kind='bar', ax=ax[0], color='#f8766d')
-    df_wd.plot(kind='bar', ax=ax[1], color='#00bfc4')
-    df_h.plot(kind='bar', ax=ax[2], color='#c77cff')
+    df_m = df_m[df_m.columns].fillna(0.)
+    df_wd = df_wd[df_wd.columns].fillna(0.)
+    df_h = df_h[df_h.columns].fillna(0.)
 
-    for i, t in zip(range(3), ['mothly', 'weekdaily', 'hourly']):
+    if percentages:
+        df_m = df_m.assign(p=(df_m['count']/df_m['all']*100).values)
+        df_wd = df_wd.assign(p=(df_wd['count']/df_wd['all']*100).values)
+        df_h = df_h.assign(p=(df_h['count']/df_h['all']*100).values)
+        df_m.drop(['count', 'all'], axis=1).plot(kind='bar', ax=ax[0], color='#f8766d')
+        df_wd.drop(['count', 'all'], axis=1).plot(kind='bar', ax=ax[1], color='#00bfc4')
+        df_h.drop(['count', 'all'], axis=1).plot(kind='bar', ax=ax[2], color='#c77cff')
+    else:
+        df_m.drop('all', axis=1).plot(kind='bar', ax=ax[0], color='#f8766d')
+        df_wd.drop('all', axis=1).plot(kind='bar', ax=ax[1], color='#00bfc4')
+        df_h.drop('all', axis=1).plot(kind='bar', ax=ax[2], color='#c77cff')
+
+    p = ' [%]' if percentages else ''
+    sizes = [11, 16, 8]
+    for i, t, df, s in zip(range(3), [f'monthly{p}', f'weekdaily{p}', f'hourly{p}'], [df_m, df_wd, df_h], sizes):
         ax[i].get_legend().remove()
         ax[i].set_title(t)
+        if percentages:
+            ax[i].set_ylim([0., thr])
+            for p, v in zip(ax[i].patches, df['count'].values):
+                text = f'{v:.0f}'
+                ax[i].text(p.get_x() + p.get_width() / 2, p.get_height(), text,
+                           ha='center', va='bottom', fontsize=s)
 
     plt.suptitle(title)
     plt.tight_layout()
@@ -55,6 +75,7 @@ def tweet_count_bars(df_m, df_wd, df_h, title='All tweets in figures.', save_fil
 
 def tweets_timeline(df, empty_spaces=None, threshold=100, empty_space_threshold=10,
                     title='Tweet amounts timeline analysis.', save_file=None):
+    df = df.drop('all', axis=1)
     fig, ax = plt.subplots(figsize=(20, 8))
 
     # plot tweet amounts
@@ -83,7 +104,7 @@ def tweets_timeline(df, empty_spaces=None, threshold=100, empty_space_threshold=
             ax.text(i, threshold + 5, f'{datetime.strftime(i, "%d.%m.%Y")}', rotation='90')
             ax.text(j, threshold + 5, f'{datetime.strftime(j, "%d.%m.%Y")}', rotation='90', ha='right')
 
-    plt.legend(loc='best')
+    plt.legend(loc='upper left')
     plt.suptitle(title)
     if save_file:
         plt.savefig(save_file)
@@ -96,7 +117,7 @@ def popularity_hists(df, attribute='likes', title=None, color='#f9766e', save_fi
     labels = LABELS + ['others']
     
     df_pop = df.loc[:, [f'{attribute}_count'] + LABELS]
-    df_pop.loc[:, LABELS] = df_pop.loc[:, LABELS].notnull().astype('int')
+    df_pop.loc[:, LABELS] = df_pop.loc[:, LABELS].fillna(0).astype('int')
 
     data = list([])
     for label in labels:
@@ -107,9 +128,9 @@ def popularity_hists(df, attribute='likes', title=None, color='#f9766e', save_fi
         data.append(d)
 
     for i, (p, label, d) in enumerate(zip(positions, labels, data)):
-        d_norm = d/np.linalg.norm(d)
+        d_norm = list([0, 1]) if not len(d) else d/np.linalg.norm(d)
 
-        ax[p[0]][p[1]].set_title(f'"{label}" | max {attribute}: {np.max(d)}')
+        ax[p[0]][p[1]].set_title(f'"{label}" | max {attribute}: {1 if not len(d) else np.max(d)}')
         ax[p[0]][p[1]].hist(d_norm, weights=np.ones(len(d_norm))/len(d_norm), color=color, label='count')
         ax[p[0]][p[1]].set_xlim(0, 1)
         ax[p[0]][p[1]].set_yscale('log')
@@ -120,7 +141,7 @@ def popularity_hists(df, attribute='likes', title=None, color='#f9766e', save_fi
     fig.legend(h, ln, loc='upper right')
 
     fig.text(0., 0.5, 'Count percentage', fontsize=16, va='center', rotation='vertical')
-    fig.text(0.5, 0., f'{attribute.capitalize()} normalized count', fontsize=16, ha='center')
+    fig.text(0.5, 0., f'{attribute.capitalize()} normalized count (max count in subtitles)', fontsize=16, ha='center')
 
     if not title:
         m = dict({'likes': 'like', 'replies': 'reply', 'retweets': 'retweet'})

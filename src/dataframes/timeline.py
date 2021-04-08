@@ -7,18 +7,26 @@ from ..utils.ops import closing_empty_spaces
 from ..constants import LABELS
 
 
-def get_stats(df, hate_type=None, month_names=None, weekday_names=None):
+def get_stats(df, hate_type=None, month_names=None, weekday_names=None, percentages=False):
     all_years = np.unique(list([d.split('-')[0] for d in df['date']]))
     all_months = range(1, 13)
     all_weekdays = range(7)
     all_hours = range(24)
     all_dates = list(daterange(df['date'].iloc[0], df['date'].iloc[-1]))
 
+    df_all = df[['date', 'time']]
+
     if hate_type:
         df = df[df[hate_type] == 1.0][['date', 'time']]
 
     # yearly counts dataframe
     df_yc = pd.DataFrame({'year': all_years})
+    y_all = list([d.split('-')[0] for d in df_all['date']])
+    y_all, cnt_all = np.unique(y_all, return_counts=True)
+    df_yc = df_yc.merge(pd.DataFrame({
+        'year': y_all,
+        'all': cnt_all
+    }), left_on='year', right_on='year', how='left')
     y = list([d.split('-')[0] for d in df['date']])
     y, cnt = np.unique(y, return_counts=True)
     df_yc = df_yc.merge(pd.DataFrame({
@@ -29,6 +37,12 @@ def get_stats(df, hate_type=None, month_names=None, weekday_names=None):
 
     # monthly counts
     df_mc = pd.DataFrame({'month': all_months})
+    m_all = np.array([int(d.split('-')[1]) for d in df_all['date']])
+    m_all, cnt_all = np.unique(m_all, return_counts=True)
+    df_mc = df_mc.merge(pd.DataFrame({
+        'month': m_all,
+        'all': cnt_all
+    }), left_on='month', right_on='month', how='left')
     m = np.array([int(d.split('-')[1]) for d in df['date']])
     m, cnt = np.unique(m, return_counts=True)
     df_mc = df_mc.merge(pd.DataFrame({
@@ -41,6 +55,12 @@ def get_stats(df, hate_type=None, month_names=None, weekday_names=None):
 
     # weekdaily counts
     df_wdc = pd.DataFrame({'weekday': all_weekdays})
+    wd_all = np.array([datetime.strptime(d, '%Y-%m-%d').weekday() for d in df_all['date']])
+    wd_all, cnt_all = np.unique(wd_all, return_counts=True)
+    df_wdc = df_wdc.merge(pd.DataFrame({
+        'weekday': wd_all,
+        'all': cnt_all
+    }), left_on='weekday', right_on='weekday', how='left')
     wd = np.array([datetime.strptime(d, '%Y-%m-%d').weekday() for d in df['date']])
     wd, cnt = np.unique(wd, return_counts=True)
     df_wdc = df_wdc.merge(pd.DataFrame({
@@ -53,6 +73,12 @@ def get_stats(df, hate_type=None, month_names=None, weekday_names=None):
 
     # hourly counts
     df_hc = pd.DataFrame({'hour': all_hours})
+    h_all = np.array([int(t.split(':')[0]) for t in df_all['time']])
+    h_all, cnt_all = np.unique(h_all, return_counts=True)
+    df_hc = df_hc.merge(pd.DataFrame({
+        'hour': h_all,
+        'all': cnt_all
+    }), left_on='hour', right_on='hour', how='left')
     h = np.array([int(t.split(':')[0]) for t in df['time']])
     h, cnt = np.unique(h, return_counts=True)
     df_hc = df_hc.merge(pd.DataFrame({
@@ -64,6 +90,11 @@ def get_stats(df, hate_type=None, month_names=None, weekday_names=None):
 
     # daily (by date) counts
     df_dc = pd.DataFrame({'date': all_dates})
+    d_all, cnt_all = np.unique(df_all['date'].values, return_counts=True)
+    df_dc = df_dc.merge(pd.DataFrame({
+        'date': list([datetime.strptime(dt, '%Y-%m-%d') for dt in d_all]),
+        'all': cnt_all
+    }), left_on='date', right_on='date', how='left')
     d, cnt = np.unique(df['date'].values, return_counts=True)
     df_dc = df_dc.merge(pd.DataFrame({
         'date': list([datetime.strptime(dt, '%Y-%m-%d') for dt in d]),
@@ -110,7 +141,7 @@ def get_monthly_stats(df, labeled=True):
         }), left_on='year-month', right_on='year-month', how='left')
         stats.append(df_ymc['count'])
 
-    df_stats = pd.DataFrame(np.array(stats).T, columns=labels, index=all_year_months)
+    df_stats = pd.DataFrame(np.array(stats).T, columns=labels, index=all_year_months).fillna(0.)
 
     return df_stats
 

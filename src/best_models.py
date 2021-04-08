@@ -11,6 +11,7 @@ from .vectorizers.TextOwnTrainedFTVectorizer import TextOwnTrainedFTVectorizer
 from .nn.models import *
 
 
+# best model: names, types, short names, params, classifier classes and kwargs
 NAMES = ['Lexical Classifier',
          'Logistic Regression Feature Classifier', 'Stochastic Gradient Descent Vector Classifier',
          'Dense Neural Network Classifier', '1D Convolutional Neural Network Classifier', 'Simple Recurrent Neural Network Classifier', 'LSTM Neural Network Classifier', 'GRU Neural Network Classifier',
