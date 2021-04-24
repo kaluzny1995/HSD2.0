@@ -290,7 +290,7 @@ class DLVectorClassifier(Classifier):
             plt.savefig(save_file)
         plt.show()
 
-    def predict(self, X):
+    def predict(self, X, return_probs=False):
         super().predict(X)
         if type(X) == pd.DataFrame:
             X = X.values.flatten()
@@ -304,8 +304,11 @@ class DLVectorClassifier(Classifier):
         test_dl = DataLoader(test_ds, batch_size=self._test_bs, shuffle=False)
 
         y = self._test(test_dl=test_dl)
-        y = self._sigmoid(y).round()
+        y_probs = self._sigmoid(y)
+        y = y_probs.round()
 
+        if return_probs:
+            return y, y_probs
         return y
 
     def test(self, text):

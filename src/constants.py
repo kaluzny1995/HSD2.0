@@ -10,6 +10,9 @@ LABELS_SMALL = ['wyz', 'groz', 'wyk', 'odcz', 'pon', 'styg', 'szan']
 LABELS_V = LABELS + ['wulgaryzm']
 LABELS_V_SMALL = LABELS_SMALL + ['vulg']
 
+QUALITY_MEASURES_SMALL = ['a', 'p0', 'p1', 'r0', 'r1', 'f0', 'f1']
+LABELS_QM_SMALL = [f'{label}_{qm}' for label in LABELS_SMALL + ['all'] for qm in QUALITY_MEASURES_SMALL]
+
 POPULARITY_LABELS = ['replies_count', 'retweets_count', 'likes_count']
 
 ANNOTATED_COLS = ['id', 'wydźwięk', 'klucze'] + LABELS
@@ -65,7 +68,8 @@ OTHER_SCORES_TESTONLY_PATH = 'data/tweets_sady/processed/other_scores_testonly.c
 
 # paths - data results
 RESULTS_DIR = 'data/results/{}.csv'
-PREDICTION_RESULTS_DIR = 'data/results/{}.csv'
+PREDICTION_RESULTS_DIR = 'data/results/predictions_{}.csv'
+EXPERIMENT_RESULTS_DIR = 'data/results/experiment_{}_results.csv'
 
 # paths - models
 LDA_MODEL_DIR = 'models/lda/lda_{}.pkl'
@@ -105,6 +109,7 @@ DLCGRUC_CHART_DIR = 'charts/08h. dl_conv1d_gru_classifier/{}.png'
 DLHP_CHART_DIR = 'charts/09. dl_hparams/{}.png'
 BEST_CHART_DIR = 'charts/10. best_models/{}.png'
 SSA_CHART_DIR = 'charts/11. statistical_secondary_analysis/{}.png'
+EXPERIMENT_CHART_DIR = 'charts/12. experiments/{}.png'
 
 # paths - other
 WORDNET_PATH = 'models/plwordnet_3_0/plwordnet-3.0.xml'

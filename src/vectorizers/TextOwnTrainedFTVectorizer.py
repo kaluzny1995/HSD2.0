@@ -8,6 +8,8 @@ import fasttext
 from ..vectorizers.Vectorizer import Vectorizer
 from ..constants import TOTFTV_MODEL_DIR, FT_OWN_MODEL_DIR, FT_DATA_DIR
 
+fasttext.FastText.eprint = lambda x: None
+
 
 class TextOwnTrainedFTVectorizer(Vectorizer):
     def __init__(self, name='TextOwnTrainedFTVectorizer', length=300, epochs=10, model_type='u', short_name='unsuper', verbose=0):
