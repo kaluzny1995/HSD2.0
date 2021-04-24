@@ -3,7 +3,12 @@
 #### Description
 This is a project of a multilabel classifier of polish tweet texts whether they contain hate speech or not. The project is being made as a Master of Science degree thesis. There are seven different types of hate speech: **abusement** *(pol. wyzywanie)*, **threatening** *(pol. grożenie)*, **exclusion** *(pol. wykluczanie)*, **dehumanization** *(pol. odczłowieczanie)*, **humiliation** *(pol. poniżanie)*, **labeling** *(pol. stygmatyzacja)* and **blackmail** *(pol. szantaż)*. The topics of all tweets is the attitude of people (Twitter users) to polish jurisdiction institutions. The annotated data concern the time from June 2014 to December 2016.
 #### Data, models and visualization
-All scraped and processed tweet data, models and chart visualizations are available here: [HSD2.0_data.zip](https://drive.google.com/file/d/1Cg1mulD2AAp7jiQ1ShZp8xgRtBODiLVg/view?usp=sharing), [HSD2.0_models.zip](https://drive.google.com/file/d/19QzvSJQ1n663e2MAV_AtZtZSs-Ts9vJF/view?usp=sharing) and [HSD2.0_charts.zip](https://drive.google.com/file/d/1mErHvy8aLiFhXP6NBCNQ_ZNRuOYRzDQ1/view?usp=sharing). Download above components and unzip them into project main directory.
+All scraped and processed tweet data, models and chart visualizations are available here: [HSD2.0_data.zip](https://drive.google.com/file/d/1Cg1mulD2AAp7jiQ1ShZp8xgRtBODiLVg/view?usp=sharing), [HSD2.0_models.zip](https://drive.google.com/file/d/1rMrhBToqucBRmyUcP8hmvVav5AxwWbJp/view?usp=sharing) and [HSD2.0_charts.zip](https://drive.google.com/file/d/1mErHvy8aLiFhXP6NBCNQ_ZNRuOYRzDQ1/view?usp=sharing). Download above components and unzip them into project main directory.<br />
+**WARNING!**: Some files in *HSD2.0_models.zip* are missing due to their huge size. You have to download the following files manually from given links and place to given directories:
+* **[nkjp-lemmas-all-100-cbow-hs.txt.gz](http://dsmodels.nlp.ipipan.waw.pl/dsmodels/nkjp-lemmas-all-100-cbow-hs.txt.gz)** - */models/word2vec*
+* **[nkjp-lemmas-all-100-skipg-hs.txt.gz](http://dsmodels.nlp.ipipan.waw.pl/dsmodels/nkjp-lemmas-all-100-skipg-hs.txt.gz)** - */models/word2vec*
+* **[kgr10_orths.vec.bin](https://clarin-pl.eu/dspace/bitstream/handle/11321/600/kgr10_orths.vec.bin?sequence=1&isAllowed=y)** - */models/fasttext*
+
 #### Abbrevations
 * **ML** - machine learning
 * **DL** - deep learning
