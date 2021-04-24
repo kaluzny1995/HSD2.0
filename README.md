@@ -38,8 +38,10 @@ All scraped and processed tweet data, models and chart visualizations are availa
     4. Siamese 1dCNN with simple, LSTM and GRU RNNs
 16. DL classifier hyperparams analysis
 17. Best three models election.
-18. Hate speech prediction with best model *(coming soon)*
-19. Statistical secondary data analysis *(coming soon)*
+18. Hate speech prediction with best model
+19. Statistical secondary data analysis
+20. Error analysis
+21. Experiments
 
 ## Descriptions
 ---
@@ -100,3 +102,9 @@ Hate speech predictions for unannotated tweets using the best trained model.
 
 ### Statistical secondary data analysis
 All data (ie. annotated and unannotated/predicted) tweets countity timeline analysis. All analyses like in primary statistical analysis.
+
+### Error analysis
+Best model (1-st, 2-nd type and other) error analysis. Utilization of precise class belonging probability values and appropriate errors calculation. Analysis which: words, word phrases, sources/users and hashtags mostly determined certain errors.
+
+### Experiments
+Experiments which concern best model parameters and hyperparameters researching. The researches concern the classification metrics for 1000 examples of testing tweets prediction (accuracy, F measures, etc.)
