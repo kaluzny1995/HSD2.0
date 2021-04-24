@@ -28,6 +28,20 @@
 ├── 19a. DLConv1dRecurrentNNVectorClassifier.ipynb
 ├── 19b. DLConv1dLSTMNNVectorClassifier.ipynb
 ├── 19c. DLConv1dGRUNNVectorClassifier.ipynb
+├── 20a. DLClassifierHyperparamsDense.ipynb
+├── 20b. DLClassifierHyperparams1dConv.ipynb
+├── 20c. DLClassifierHyperparamsLSTM.ipynb
+├── 20d. DLClassifierHyperparamsGRU.ipynb
+├── 20e. DLClassifierHyperparams1dConvLSTM.ipynb
+├── 20f. DLClassifierHyperparams1dConvGRU.ipynb
+├── 21. BestModels.ipynb
+├── 22. HateSpeechPrediction.ipynb
+├── 23. StatisticalSecondaryDataAnalysis.ipynb
+├── 24. ErrorAnalysis.ipynb
+├── 25a. Experiment E1.ipynb
+├── 25b. Experiment E2.ipynb
+├── 25c. Experiment E3.ipynb
+├── 25d. Experiment E4.ipynb
 ├── charts
 │   ├── 00. schemes
 │   │   ├── HSD2.0_scheme01.png
@@ -40,19 +54,22 @@
 │   │   ├── single_class_cardinalities_hbar.png
 │   │   └── vulgar_words_cardinalities_venn.png
 │   ├── 02. statistical_primary_analysis
+│   │   ├── all_ym_tweet_amounts_lines.png
+│   │   ├── all_ym_tweet_wordcounts_lines.png
 │   │   ├── like_counts_hists.png
 │   │   ├── replies_counts_hists.png
 │   │   ├── retweet_counts_hists.png
 │   │   ├── tweet_count_bars.png
-│   │   ├── tweets_all_timeline.png
 │   │   ├── tweets_groz_timeline.png
 │   │   ├── tweets_odcz_timeline.png
 │   │   ├── tweets_pon_timeline.png
 │   │   ├── tweets_styg_timeline.png
 │   │   ├── tweets_szan_timeline.png
+│   │   ├── tweets_timeline.png
 │   │   ├── tweets_wyk_timeline.png
 │   │   ├── tweets_wyz_timeline.png
-│   │   └── tweet_yearly_counts_pie.png
+│   │   ├── tweet_yearly_counts_pie.png
+│   │   └── tweet_ym_amounts_lines.png
 │   ├── 03. extended_data_analysis
 │   │   ├── combination_of_class_cardinalities_upset.png
 │   │   ├── hateful_phrases_cardinalities_bar.png
@@ -62,46 +79,29 @@
 │   ├── 04. lexical_classifier
 │   │   ├── confusion_matrices.png
 │   │   ├── f_measure_lines_groz.png
-│   │   ├── f_measure_lines_odcz.png
-│   │   ├── f_measure_lines_pon.png
-│   │   ├── f_measure_lines_styg.png
-│   │   ├── f_measure_lines_szan.png
-│   │   ├── f_measure_lines_wyk.png
+│   │   ├── ...
 │   │   └── f_measure_lines_wyz.png
 │   ├── 05. simple_ml_classifier
 │   │   ├── best_F_bars.png
 │   │   ├── confusion_matrices_DTC-entropy.png
-│   │   ├── confusion_matrices_DTC-gini.png
-│   │   ├── confusion_matrices_LRC-l1.png
-│   │   ├── confusion_matrices_LRC-l2.png
-│   │   ├── confusion_matrices_RFC-entropy.png
-│   │   ├── confusion_matrices_RFC-gini.png
-│   │   ├── confusion_matrices_SGD-l1.png
+│   │   ├── ...
 │   │   ├── confusion_matrices_SGD-l2.png
 │   │   ├── models_F_bars.png
 │   │   ├── models_P_bars.png
 │   │   └── models_R_bars.png
 │   ├── 06. simple_ml_vector_classifier
 │   │   ├── best_F_bars.png
-│   │   ├── ***
+│   │   ├── confusion_matrices_DTC-entropy.png
+│   │   ├── ...
+│   │   ├── confusion_matrices_SGD-l2.png
+│   │   ├── models_F_bars.png
+│   │   ├── models_P_bars.png
 │   │   └── models_R_bars.png
 │   ├── 07a. simple_ml_classifier_vectors
 │   │   ├── best_F_bars_2.png
 │   │   ├── best_F_bars.png
 │   │   ├── confusion_matrices_BERT-pret.png
-│   │   ├── confusion_matrices_BERT-retr.png
-│   │   ├── confusion_matrices_Chars.png
-│   │   ├── confusion_matrices_FT-mtr-s.png
-│   │   ├── confusion_matrices_FT-mtr-u.png
-│   │   ├── confusion_matrices_FT-pret.png
-│   │   ├── confusion_matrices_RoBERTa-pret.png
-│   │   ├── confusion_matrices_RoBERTa-retr.png
-│   │   ├── confusion_matrices_Simple-BoW.png
-│   │   ├── confusion_matrices_TFIDF.png
-│   │   ├── confusion_matrices_TF.png
-│   │   ├── confusion_matrices_W2V-mtr-CBoW.png
-│   │   ├── confusion_matrices_W2V-mtr-SkipGram.png
-│   │   ├── confusion_matrices_W2V-pret-CBoW.png
+│   │   ├── ...
 │   │   ├── confusion_matrices_W2V-pret-SkipGram.png
 │   │   ├── models_F_bars_2.png
 │   │   ├── models_F_bars.png
@@ -111,68 +111,235 @@
 │   │   └── models_R_bars.png
 │   ├── 07b. dl_classifier_vectors
 │   │   ├── best_F_bars_2.png
-│   │   ├── ***
+│   │   ├── best_F_bars.png
+│   │   ├── best_history_lines_2.png
+│   │   ├── best_history_lines.png
+│   │   ├── confusion_matrices_BERT-pret.png
+│   │   ├── ...
+│   │   ├── confusion_matrices_W2V-pret-SkipGram.png
+│   │   ├── models_F_bars_2.png
+│   │   ├── models_F_bars.png
+│   │   ├── models_P_bars_2.png
+│   │   ├── models_P_bars.png
+│   │   ├── models_R_bars_2.png
 │   │   └── models_R_bars.png
 │   ├── 08a. dl_dense_classifier
 │   │   ├── w2_best_F_bars.png
-│   │   ├── ***
+│   │   ├── w2_best_history_lines.png
+│   │   ├── w2_confusion_matrices_300-0-1.png
+│   │   ├── ...
+│   │   ├── w2_confusion_matrices_500-1-3.png
+│   │   ├── w2_models_F_bars.png
+│   │   ├── w2_models_P_bars.png
 │   │   └── w2_models_R_bars.png
 │   ├── 08b. dl_conv1d_classifier
 │   │   ├── w2_best_F_bars.png
-│   │   ├── ***
+│   │   ├── w2_best_history_lines.png
+│   │   ├── w2_confusion_matrices_32-3-1.png
+│   │   ├── ...
+│   │   ├── w2_confusion_matrices_64-5-6.png
+│   │   ├── w2_models_F_bars.png
+│   │   ├── w2_models_P_bars.png
 │   │   └── w2_models_R_bars.png
 │   ├── 08c. dl_recurrent_classifier
 │   │   ├── w2_best_F_bars.png
-│   │   ├── ***
+│   │   ├── w2_best_history_lines.png
+│   │   ├── w2_confusion_matrices_1-0-0.png
+│   │   ├── ...
+│   │   ├── w2_confusion_matrices_5-1-1.png
+│   │   ├── w2_models_F_bars.png
+│   │   ├── w2_models_P_bars.png
 │   │   └── w2_models_R_bars.png
 │   ├── 08d. dl_lstm_classifier
 │   │   ├── w2_best_F_bars.png
-│   │   ├── ***
+│   │   ├── w2_best_history_lines.png
+│   │   ├── w2_confusion_matrices_1-0-0.png
+│   │   ├── ...
+│   │   ├── w2_confusion_matrices_5-1-1.png
+│   │   ├── w2_models_F_bars.png
+│   │   ├── w2_models_P_bars.png
 │   │   └── w2_models_R_bars.png
 │   ├── 08e. dl_gru_classifier
 │   │   ├── w2_best_F_bars.png
-│   │   ├── ***
+│   │   ├── w2_best_history_lines.png
+│   │   ├── w2_confusion_matrices_1-0-0.png
+│   │   ├── ...
+│   │   ├── w2_confusion_matrices_5-1-1.png
+│   │   ├── w2_models_F_bars.png
+│   │   ├── w2_models_P_bars.png
 │   │   └── w2_models_R_bars.png
 │   ├── 08f. dl_conv1d_recurrent_classifier
 │   │   ├── w2_best_F_bars.png
-│   │   ├── ***
+│   │   ├── w2_best_history_lines.png
+│   │   ├── w2_confusion_matrices_20-100-0.png
+│   │   ├── ...
+│   │   ├── w2_confusion_matrices_8-50-1.png
+│   │   ├── w2_models_F_bars.png
+│   │   ├── w2_models_P_bars.png
 │   │   └── w2_models_R_bars.png
 │   ├── 08g. dl_conv1d_lstm_classifier
 │   │   ├── w2_best_F_bars.png
-│   │   ├── ***
+│   │   ├── w2_best_history_lines.png
+│   │   ├── w2_confusion_matrices_20-100-0.png
+│   │   ├── ...
+│   │   ├── w2_confusion_matrices_8-50-1.png
+│   │   ├── w2_models_F_bars.png
+│   │   ├── w2_models_P_bars.png
 │   │   └── w2_models_R_bars.png
-│   └── 08h. dl_conv1d_gru_classifier
-│       ├── w2_best_F_bars.png
-│       ├── ***
-│       └── w2_models_R_bars.png
+│   ├── 08h. dl_conv1d_gru_classifier
+│   │   ├── w2_best_F_bars.png
+│   │   ├── w2_best_history_lines.png
+│   │   ├── w2_confusion_matrices_20-100-0.png
+│   │   ├── ...
+│   │   ├── w2_confusion_matrices_8-50-1.png
+│   │   ├── w2_models_F_bars.png
+│   │   ├── w2_models_P_bars.png
+│   │   └── w2_models_R_bars.png
+│   ├── 09. dl_hparams
+│   │   ├── 1dcgru_w2_best_F_bars.png
+│   │   ├── 1dcgru_w2_best_history_lines.png
+│   │   ├── 1dcgru_w2_confusion_matrices_adamw-ams-cyc.png
+│   │   ├── ...
+│   │   ├── 1dcgru_w2_confusion_matrices_sgd-rop.png
+│   │   ├── 1dcgru_w2_models_F_bars.png
+│   │   ├── 1dcgru_w2_models_P_bars.png
+│   │   ├── 1dcgru_w2_models_R_bars.png
+│   │   ├── 1dclstm_w2_best_F_bars.png
+│   │   ├── 1dclstm_w2_best_history_lines.png
+│   │   ├── 1dclstm_w2_confusion_matrices_adamw-ams-cyc.png
+│   │   ├── ...
+│   │   ├── 1dclstm_w2_confusion_matrices_sgd-rop.png
+│   │   ├── 1dclstm_w2_models_F_bars.png
+│   │   ├── 1dclstm_w2_models_P_bars.png
+│   │   ├── 1dclstm_w2_models_R_bars.png
+│   │   ├── c1d_w2_best_F_bars.png
+│   │   ├── c1d_w2_best_history_lines.png
+│   │   ├── c1d_w2_confusion_matrices_adamw-ams-cyc.png
+│   │   ├── ...
+│   │   ├── c1d_w2_confusion_matrices_sgd-rop.png
+│   │   ├── c1d_w2_models_F_bars.png
+│   │   ├── c1d_w2_models_P_bars.png
+│   │   ├── c1d_w2_models_R_bars.png
+│   │   ├── dense_w2_best_F_bars.png
+│   │   ├── dense_w2_best_history_lines.png
+│   │   ├── dense_w2_confusion_matrices_adamw-ams-cyc.png
+│   │   ├── ...
+│   │   ├── dense_w2_confusion_matrices_sgd-rop.png
+│   │   ├── dense_w2_models_F_bars.png
+│   │   ├── dense_w2_models_P_bars.png
+│   │   ├── dense_w2_models_R_bars.png
+│   │   ├── gru_w2_best_F_bars.png
+│   │   ├── gru_w2_best_history_lines.png
+│   │   ├── gru_w2_confusion_matrices_adamw-ams-cyc.png
+│   │   ├── ...
+│   │   ├── gru_w2_confusion_matrices_sgd-rop.png
+│   │   ├── gru_w2_models_F_bars.png
+│   │   ├── gru_w2_models_P_bars.png
+│   │   ├── gru_w2_models_R_bars.png
+│   │   ├── lstm_w2_best_F_bars.png
+│   │   ├── lstm_w2_best_history_lines.png
+│   │   ├── lstm_w2_confusion_matrices_adamw-ams-cyc.png
+│   │   ├── ...
+│   │   ├── lstm_w2_confusion_matrices_sgd-rop.png
+│   │   ├── lstm_w2_models_F_bars.png
+│   │   ├── lstm_w2_models_P_bars.png
+│   │   └── lstm_w2_models_R_bars.png
+│   ├── 10. best_models
+│   │   ├── best_F_bars.png
+│   │   ├── confusion_matrices_1dCNN+GRU-HP.png
+│   │   ├── ...
+│   │   ├── confusion_matrices_SGDVC.png
+│   │   ├── deep_models_valid_A_bars.png
+│   │   ├── deep_models_valid_F_bars.png
+│   │   ├── models_F_bars.png
+│   │   ├── models_P_bars.png
+│   │   └── models_R_bars.png
+│   ├── 11. statistical_secondary_analysis
+│   │   ├── all_ym_tweet_amounts_lines.png
+│   │   ├── all_ym_tweet_wordcounts_lines.png
+│   │   ├── like_counts_hists.png
+│   │   ├── replies_counts_hists.png
+│   │   ├── retweet_counts_hists.png
+│   │   ├── tweet_count_bars.png
+│   │   ├── tweets_groz_timeline.png
+│   │   ├── tweets_odcz_timeline.png
+│   │   ├── tweets_pon_timeline.png
+│   │   ├── tweets_styg_timeline.png
+│   │   ├── tweets_szan_timeline.png
+│   │   ├── tweets_timeline.png
+│   │   ├── tweets_wyk_timeline.png
+│   │   ├── tweets_wyz_timeline.png
+│   │   ├── tweet_yearly_counts_pie.png
+│   │   └── tweet_ym_amounts_lines.png
+│   └── 12. experiments
+│       ├── E1_a_lines.png
+│       ├── ...
+│       ├── E1_wyz_lines.png
+│       ├── E2_a_lines.png
+│       ├── ...
+│       ├── E2_wyz_lines.png
+│       ├── E3_a_lines.png
+│       ├── ...
+│       ├── E3_wyz_lines.png
+│       ├── E4_a_lines.png
+│       ├── ...
+│       └── E4_wyz_lines.png
 ├── data
 │   ├── hateful
 │   │   ├── ext_groz.txt
-│   │   ├── ***
+│   │   ├── ...
+│   │   ├── ext_wyz.txt
+│   │   ├── lemm_groz.txt
+│   │   ├── ...
+│   │   ├── lemm_wyz.txt
+│   │   ├── raw_groz.txt
+│   │   ├── ...
 │   │   └── raw_wyz.txt
 │   ├── other
 │   │   └── polish_stopwords.txt
+│   ├── results
+│   │   ├── best_models_results.csv
+│   │   ├── best_models_train_results.csv
+│   │   ├── experiment_E1_results.csv
+│   │   ├── experiment_E2_results.csv
+│   │   ├── experiment_E3_results.csv
+│   │   ├── experiment_E4_results.csv
+│   │   ├── predictions_1dCNN+GRU-HP.csv
+│   │   ├── predictions_RNN.csv
+│   │   └── predictions_SGDVC.csv
+│   ├── tweets_2014_2020
+│   │   ├── all_lemmas.csv
+│   │   ├── all_other_scores.csv
+│   │   ├── all_poc_scores.csv
+│   │   ├── all_topic_poc_scores.csv
+│   │   └── sady_all_sanitized.csv
 │   ├── tweets_sady
 │   │   ├── main
 │   │   │   ├── sady_combined.csv
+│   │   │   ├── sady_combined_testonly.csv
 │   │   │   ├── sady_date_annotated.csv
+│   │   │   ├── sady_date_annotated_testonly.csv
 │   │   │   ├── sady_infos_raw.csv
 │   │   │   └── sady_infos_sanitized.csv
 │   │   └── processed
-│   │       ├── annotation_sheet.csv
+│   │       ├── annotation_sheet_a0.csv
+│   │       ├── annotation_sheet_a1.csv
 │   │       ├── annotation_sheet_empty.csv
 │   │       ├── lemmas.csv
+│   │       ├── lemmas_testonly.csv
 │   │       ├── other_scores.csv
+│   │       ├── other_scores_testonly.csv
 │   │       ├── poc_scores.csv
+│   │       ├── poc_scores_testonly.csv
 │   │       ├── sady_duplicated.csv
-│   │       └── topic_poc_scores.csv
+│   │       ├── topic_poc_scores.csv
+│   │       └── topic_poc_scores_testonly.csv
 │   ├── tweets_supplement
-│   │   ├── main
-│   │   │   ├── sady_2015-0405_raw.csv
-│   │   │   ├── sady_2015-0405_sanitized.csv
-│   │   │   ├── sady_2016-0206_raw.csv
-│   │   │   └── sady_2016-0206_sanitized.csv
-│   │   └── processed
+│   │   ├── sady_2015-0405_raw.csv
+│   │   ├── ...
+│   │   ├── sady_2019-1203_raw.csv
+│   │   ├── sady_supplement_raw.csv
+│   │   └── sady_supplement_sanitized.csv
 │   ├── vulgars
 │   │   ├── ext_vulg.txt
 │   │   ├── lemm_vulg.txt
@@ -185,7 +352,7 @@
 │   │   ├── ass.csv
 │   │   ├── babol.csv
 │   │   ├── bachnąć.csv
-│   │   ├── ***
+│   │   ├── ...
 │   │   ├── zrobić_loda.csv
 │   │   ├── żłopanie.csv
 │   │   └── żłopnąć.csv
@@ -193,7 +360,7 @@
 │   │   ├── afa.csv
 │   │   ├── a_gówno.csv
 │   │   ├── bać_się_o_własną_dupę.csv
-│   │   ├── ***
+│   │   ├── ...
 │   │   ├── zjeby.csv
 │   │   ├── zrobić_w_chuja.csv
 │   │   └── zrobić_z_dupy_garaż.csv
@@ -201,10 +368,13 @@
 │       ├── afa__texts.csv
 │       ├── a_gówno__texts.csv
 │       ├── ass__texts.csv
-│       ├── ***
+│       ├── ...
 │       ├── zrobić_z_dupy_garaż__texts.csv
 │       ├── żłopanie__texts.csv
 │       └── żłopnąć__texts.csv
+├── HSD2.0_charts.zip
+├── HSD2.0_data.zip
+├── HSD2.0_models.zip
 ├── models
 │   ├── bert
 │   │   ├── bert_bert
@@ -235,54 +405,78 @@
 │   ├── classification
 │   │   ├── dl_vecs
 │   │   │   ├── dlv_BERT-pret_dense.pkl
-│   │   │   ├── ***
+│   │   │   ├── dlv_BERT-pret_dense.pt
+│   │   │   ├── ...
+│   │   │   ├── dlv_W2V-pret-SkipGram_dense.pkl
 │   │   │   └── dlv_W2V-pret-SkipGram_dense.pt
 │   │   ├── lexical
 │   │   │   └── lex.pkl
 │   │   ├── simple_ml
 │   │   │   ├── sml_DTC-entropy.pkl
-│   │   │   ├── ***
+│   │   │   ├── ...
 │   │   │   └── sml_SGD-l2.pkl
 │   │   ├── simple_ml_vecs
 │   │   │   ├── smlc_rfc_BERT-pret.pkl
-│   │   │   ├── ***
+│   │   │   ├── ...
 │   │   │   └── smlc_rfc_W2V-pret-SkipGram.pkl
 │   │   ├── simple_vec_ml
 │   │   │   ├── smlv_ft_DTC-entropy.pkl
-│   │   │   ├── ***
+│   │   │   ├── ...
 │   │   │   └── smlv_ft_SGD-l2.pkl
 │   │   └── vec_dl
 │   │       ├── conv1d_gru_w2
 │   │       │   ├── dlvc_20-100-0.pkl
-│   │       │   ├── ***
+│   │       │   ├── dlvc_20-100-0.pt
+│   │       │   ├── ...
+│   │       │   ├── dlvc_8-50-1.pkl
 │   │       │   └── dlvc_8-50-1.pt
 │   │       ├── conv1d_lstm_w2
 │   │       │   ├── dlvc_20-100-0.pkl
-│   │       │   ├── ***
+│   │       │   ├── dlvc_20-100-0.pt
+│   │       │   ├── ...
+│   │       │   ├── dlvc_8-50-1.pkl
 │   │       │   └── dlvc_8-50-1.pt
 │   │       ├── conv1d_recurrent_w2
 │   │       │   ├── dlvc_20-100-0.pkl
-│   │       │   ├── ***
+│   │       │   ├── dlvc_20-100-0.pt
+│   │       │   ├── ...
+│   │       │   ├── dlvc_8-50-1.pkl
 │   │       │   └── dlvc_8-50-1.pt
 │   │       ├── conv1d_w2
-│   │       │   ├── dlvc_32-3-2.pkl
-│   │       │   ├── ***
-│   │       │   └── dlvc_64-5-6.pt
+│   │       │   ├── dlvc_32-3-1.pkl
+│   │       │   ├── dlvc_32-3-1.pt
+│   │       │   ├── ...
+│   │       │   ├── dlvc_64-5-4.pkl
+│   │       │   └── dlvc_64-5-4.pt
 │   │       ├── dense_w2
 │   │       │   ├── dlvc_300-0-1.pkl
-│   │       │   ├── ***
+│   │       │   ├── dlvc_300-0-1.pt
+│   │       │   ├── ...
+│   │       │   ├── dlvc_500-1-3.pkl
 │   │       │   └── dlvc_500-1-3.pt
 │   │       ├── gru_w2
 │   │       │   ├── dlvc_1-0-0.pkl
-│   │       │   ├── ***
+│   │       │   ├── dlvc_1-0-0.pt
+│   │       │   ├── ...
+│   │       │   ├── dlvc_5-1-1.pkl
 │   │       │   └── dlvc_5-1-1.pt
+│   │       ├── hparams_w2
+│   │       │   ├── dlvc_1dcgru_adamw-ams-cyc.pkl
+│   │       │   ├── dlvc_1dcgru_adamw-ams-cyc.pt
+│   │       │   ├── ...
+│   │       │   ├── dlvc_lstm_sgd-rop.pkl
+│   │       │   └── dlvc_lstm_sgd-rop.pt
 │   │       ├── lstm_w2
 │   │       │   ├── dlvc_1-0-0.pkl
-│   │       │   ├── ***
+│   │       │   ├── dlvc_1-0-0.pt
+│   │       │   ├── ...
+│   │       │   ├── dlvc_5-1-1.pkl
 │   │       │   └── dlvc_5-1-1.pt
 │   │       └── recurrent_w2
 │   │           ├── dlvc_1-0-0.pkl
-│   │           ├── ***
+│   │           ├── dlvc_1-0-0.pt
+│   │           ├── ...
+│   │           ├── dlvc_5-1-1.pkl
 │   │           └── dlvc_5-1-1.pt
 │   ├── fasttext
 │   │   ├── ft_data_s.txt
@@ -319,9 +513,13 @@
 │   │   │   ├── ttfidf_tfidf.pkl
 │   │   │   └── ttfidf_tf.pkl
 │   │   └── word
+│   │       ├── wotv_CBoW-pca.pkl
 │   │       ├── wotv_CBoW.pkl
+│   │       ├── wotv_SkipGram-pca.pkl
 │   │       ├── wotv_SkipGram.pkl
+│   │       ├── wptv_CBoW-pca.pkl
 │   │       ├── wptv_CBoW.pkl
+│   │       ├── wptv_SkipGram-pca.pkl
 │   │       ├── wptv_SkipGram.pkl
 │   │       └── wsbv.pkl
 │   └── word2vec
@@ -335,6 +533,8 @@
 │   │   ├── other.py
 │   │   ├── poc.py
 │   │   └── topic_poc.py
+│   ├── annotation.py
+│   ├── best_models.py
 │   ├── classifiers
 │   │   ├── Classifier.py
 │   │   ├── DLVectorClassifier.py
@@ -347,6 +547,8 @@
 │   │   ├── duplication.py
 │   │   ├── timeline.py
 │   │   └── utils.py
+│   ├── error_analysis.py
+│   ├── experiments.py
 │   ├── extension
 │   │   ├── com.py
 │   │   ├── lemm.py
@@ -390,4 +592,4 @@
 └── tasks.odt
 ```
 
-83 directories, 3264 files
+88 directories, 3668 files
